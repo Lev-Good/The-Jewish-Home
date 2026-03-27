@@ -1,0 +1,2111 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>פורום הבית היהודי</title>
+		<link rel="icon" type="image/png" href="favicon.png">
+    <!-- גופן Assistant -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { 800: '#1e293b', 900: '#0f172a' },
+                        gold: { DEFAULT: '#d4af37', hover: '#b5952f', light: '#fef08a' }
+                    },
+                    fontFamily: {
+                        sans: ['Assistant', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+		body {
+		background-color: #f8fafc;
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+		-webkit-tap-highlight-color: transparent;
+		}
+
+		.dark body {
+		background-color: #0f172a;
+		color: #f1f5f9;
+		}
+
+		/* אנימציות ומעברים */
+		.tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+		.tab-content.active { display: block; }
+		@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+		.tile-card { transition: all 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+		.tile-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+
+		/* גלילה מותאמת */
+		.custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+		.custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+		.dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+		/* רקע עדין */
+		.bg-pattern {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80' width='80' height='80'%3E%3Cpath fill='%2394a3b8' fill-opacity='0.05' d='M14 16H9v-2h5V9.87a4 4 0 1 1 2 0V14h5v2h-5v15.95A10 10 0 0 0 23.66 27l-3.46-2a8 8 0 0 1-2.2-15.28V16zM66 4H71v2h-5v4.13a4 4 0 1 1-2 0V6h-5V4h5V-1.95A10 10 0 0 0 56.34 3l3.46 2A8 8 0 0 1 64 15.28V4zM40 65a8 8 0 0 1 2.2 15.28V84h5v2h-5v4.13a4 4 0 1 1-2 0V86h-5v-2h5V80.13A10 10 0 0 0 32.34 77l3.46-2A8 8 0 0 1 40 65z'%3E%3C/path%3E%3C/svg%3E");
+		background-size: 320px;
+		background-attachment: fixed;
+		}
+
+		/* מודאלים גלאסמורפיזם */
+		.modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); z-index: 60; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+		.modal.active { display: flex; animation: fadeIn 0.2s; }
+
+		/* נגן אודיו צף */
+		#floatingAudioPlayer { transition: transform 0.3s ease-in-out; }
+		#floatingAudioPlayer.hidden-player { transform: translateY(150%); }
+
+		/* תפריט מובייל תחתון */
+		.bottom-nav-pb { padding-bottom: 70px; }
+		@media (min-width: 640px) { .bottom-nav-pb { padding-bottom: 0; } }
+
+		mark { background-color: #fef08a; border-radius: 2px; padding: 0 2px; color: #0f172a; }
+		.dark mark { background-color: #854d0e; color: #f8fafc; }
+
+		/* אנימציית פידבקים (Marquee) */
+		.marquee-wrapper {
+		display: flex;
+		overflow: hidden;
+		user-select: none;
+		gap: 1.5rem;
+		/* אפקט עמעום בצדדים */
+		-webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+		mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+		}
+		.marquee-content {
+		flex-shrink: 0;
+		display: flex;
+		justify-content: space-around;
+		gap: 1.5rem;
+		min-width: 100%;
+		animation: scroll-ltr 45s linear infinite;
+		}
+		.marquee-wrapper:hover .marquee-content {
+		animation-play-state: paused;
+		}
+		@keyframes scroll-ltr {
+		from { transform: translateX(0); }
+		to { transform: translateX(-100%); }
+		}
+		/* הגדרות נגישות עצמאיות */
+		body.a11y-highlight-links a, body.a11y-highlight-links button { text-decoration: underline !important; font-weight: 800 !important; }
+		body.a11y-readable-font * { font-family: Arial, Helvetica, sans-serif !important; letter-spacing: 0.5px !important; }
+	</style>
+</head>
+<body class="text-slate-800 dark:text-slate-200 bg-pattern bottom-nav-pb transition-colors duration-300">
+
+    <!-- ==================== כותרת ותפריט ניווט ==================== -->
+    <header class="bg-navy-900/90 dark:bg-navy-950/90 text-white shadow-lg border-b-4 border-gold sticky top-0 z-40 backdrop-blur-md transition-colors">
+        <div class="container mx-auto px-4 py-2 sm:py-3">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-center md:text-right mb-3 md:mb-0 cursor-pointer flex items-center gap-3" onclick="switchTab('home')">
+                    <i data-lucide="book-open" class="w-8 h-8 text-gold"></i>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-gold tracking-tight">פורום הבית היהודי</h1>
+                        <p class="text-xs sm:text-sm text-gray-300 mt-0.5 tracking-wide">בנשיאות מורינו הגאון הגדול ר' עמרם פריד שליט"א</p>
+                    </div>
+                </div>
+                
+                <!-- אזור משתמש וכלים -->
+				<div class="flex items-center gap-2 sm:gap-3 bg-slate-800/80 dark:bg-slate-900/80 p-1.5 sm:p-2 rounded-xl border border-slate-700/50 backdrop-blur-sm">
+					<button onclick="toggleDarkMode()" class="p-1.5 rounded-lg hover:bg-slate-700 text-gray-300 hover:text-gold transition" title="מצב לילה/יום">
+						<i data-lucide="moon" id="darkModeIcon" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+					</button>
+
+					<!-- כפתור הנגישות החדש והעדין -->
+					<button onclick="toggleA11yMenu()" class="p-1.5 rounded-lg hover:bg-slate-700 text-gray-300 hover:text-gold transition" title="הגדרות נגישות">
+						<i data-lucide="accessibility" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+					</button>
+
+					<div class="w-px h-5 bg-slate-600"></div>
+
+					<!-- אזור הצופים מוסתר כרגע בהערה
+                    <span id="liveViewers" class="text-gold text-xs sm:text-sm font-bold flex items-center gap-1 hidden sm:flex">
+                        <span class="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+                        <span id="viewersCount">טוען...</span> צופים
+                    </span>
+                    <div class="w-px h-5 bg-slate-600 hidden sm:block"></div>
+                    -->
+
+					<button id="loginBtn" onclick="toggleLogin()" class="flex items-center gap-1.5 text-xs sm:text-sm font-medium hover:text-gold transition pr-1 sm:pr-0">
+                        <i data-lucide="user-circle" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                        <span id="loginText">התחברות</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <nav id="mainNavMenu" class="hidden sm:flex space-x-4 space-x-reverse bg-navy-900/50 dark:bg-black/20 p-1.5 text-sm overflow-x-auto custom-scrollbar justify-center">
+            <button onclick="switchTab('home')" class="nav-btn px-5 py-2 rounded-lg transition font-semibold text-white hover:bg-slate-700 whitespace-nowrap flex items-center gap-2"><i data-lucide="home" class="w-4 h-4"></i>ראשי</button>
+            <button onclick="switchTab('library')" class="nav-btn px-5 py-2 rounded-lg transition font-semibold text-white hover:bg-slate-700 whitespace-nowrap flex items-center gap-2"><i data-lucide="library" class="w-4 h-4"></i>אוצר השיעורים</button>
+            <button onclick="switchTab('schedule')" class="nav-btn px-5 py-2 rounded-lg transition font-semibold text-white hover:bg-slate-700 whitespace-nowrap flex items-center gap-2"><i data-lucide="calendar-days" class="w-4 h-4"></i>לוח זמנים</button>
+            <button onclick="switchTab('beit-horaah')" class="nav-btn px-5 py-2 rounded-lg transition font-semibold text-white hover:bg-slate-700 whitespace-nowrap flex items-center gap-2"><i data-lucide="message-circle-question" class="w-4 h-4"></i>בית ההוראה</button>
+            <button onclick="switchTab('blog')" class="nav-btn px-5 py-2 rounded-lg transition font-semibold text-white hover:bg-slate-700 whitespace-nowrap flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i>מאמרים</button>
+            <button onclick="switchTab('history')" id="navHistory" class="nav-btn px-5 py-2 rounded-lg transition font-semibold text-white hover:bg-slate-700 whitespace-nowrap hidden items-center gap-2"><i data-lucide="history" class="w-4 h-4"></i>צפיתי לאחרונה</button>
+            <button onclick="switchTab('about')" class="nav-btn px-5 py-2 rounded-lg transition font-semibold text-white hover:bg-slate-700 whitespace-nowrap flex items-center gap-2"><i data-lucide="info" class="w-4 h-4"></i>מידע</button>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 flex-grow" id="mainContainer">
+        
+        <!-- ================= דף ראשי (Home) ================= -->
+        <div id="home" class="tab-content active">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-navy-900 dark:text-white mb-4 tracking-tight">ברוכים הבאים לפורום הבית היהודי</h2>
+                    <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">המרכז הגדול לשיעורי תורה, הדרכת חתנים, ייעוץ זוגי והלכה - מפי טובי הרבנים והמרצים, בנשיאות הגאון רבי עמרם פריד שליט"א.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <button onclick="switchTab('library')" class="tile-card bg-white dark:bg-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center text-center border-b-4 border-slate-200 dark:border-slate-700 hover:border-gold dark:hover:border-gold group">
+                        <div class="w-20 h-20 bg-slate-50 dark:bg-slate-900 text-gold rounded-full flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-inner border border-slate-100 dark:border-slate-800"><i data-lucide="library" class="w-10 h-10"></i></div>
+                        <h3 class="text-2xl font-bold text-navy-900 dark:text-white mb-2">אוצר השיעורים</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">מאות שיעורי שמע ווידאו מסודרים לפי נושאים ורבנים.</p>
+                    </button>
+                    <button onclick="switchTab('schedule')" class="tile-card bg-white dark:bg-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center text-center border-b-4 border-slate-200 dark:border-slate-700 hover:border-gold dark:hover:border-gold group">
+                        <div class="w-20 h-20 bg-slate-50 dark:bg-slate-900 text-gold rounded-full flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-inner border border-slate-100 dark:border-slate-800"><i data-lucide="calendar-days" class="w-10 h-10"></i></div>
+                        <h3 class="text-2xl font-bold text-navy-900 dark:text-white mb-2">זמני השיעורים</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">לוח שיעורים עדכני של כל ההרצאות במרחב הדיגיטלי.</p>
+                    </button>
+                    <button onclick="switchTab('beit-horaah')" class="tile-card bg-white dark:bg-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center text-center border-b-4 border-slate-200 dark:border-slate-700 hover:border-gold dark:hover:border-gold group">
+                        <div class="w-20 h-20 bg-slate-50 dark:bg-slate-900 text-gold rounded-full flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-inner border border-slate-100 dark:border-slate-800"><i data-lucide="message-circle-question" class="w-10 h-10"></i></div>
+                        <h3 class="text-2xl font-bold text-navy-900 dark:text-white mb-2">בית ההוראה</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">שליחת שאלות בדיסקרטיות וקבלת הכוונה תורנית מהירה.</p>
+                    </button>
+                    <button onclick="switchTab('blog')" class="tile-card bg-white dark:bg-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center text-center border-b-4 border-slate-200 dark:border-slate-700 hover:border-gold dark:hover:border-gold group">
+                        <div class="w-20 h-20 bg-slate-50 dark:bg-slate-900 text-gold rounded-full flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-inner border border-slate-100 dark:border-slate-800"><i data-lucide="file-text" class="w-10 h-10"></i></div>
+                        <h3 class="text-2xl font-bold text-navy-900 dark:text-white mb-2">מאמרים</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">מאמרים, סיכומים והדרכות מפי רבני ומרצי הפורום.</p>
+                    </button>
+                    <button onclick="switchTab('about')" class="tile-card bg-white dark:bg-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center text-center border-b-4 border-slate-200 dark:border-slate-700 hover:border-gold dark:hover:border-gold group">
+                        <div class="w-20 h-20 bg-slate-50 dark:bg-slate-900 text-gold rounded-full flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-inner border border-slate-100 dark:border-slate-800"><i data-lucide="info" class="w-10 h-10"></i></div>
+                        <h3 class="text-2xl font-bold text-navy-900 dark:text-white mb-2">פרטים ומידע</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">הצטרפות למסלולים, בקשת סבסוד, תרומות ואודות.</p>
+                    </button>
+                    <button onclick="requireLogin('history')" class="tile-card bg-white dark:bg-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center text-center border-b-4 border-slate-200 dark:border-slate-700 hover:border-gold dark:hover:border-gold group">
+                        <div class="w-20 h-20 bg-slate-50 dark:bg-slate-900 text-gold rounded-full flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-inner border border-slate-100 dark:border-slate-800"><i data-lucide="history" class="w-10 h-10"></i></div>
+                        <h3 class="text-2xl font-bold text-navy-900 dark:text-white mb-2">צפיתי לאחרונה</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">חזרה להמשך צפייה מהמקום שבו עצרת. (מצריך התחברות)</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= דף סייר השיעורים (Library) ================= -->
+        <div id="library" class="tab-content">
+            <div class="bg-gradient-to-r from-navy-900 to-slate-800 rounded-2xl p-6 md:p-8 mb-8 text-white shadow-lg flex flex-col md:flex-row items-center justify-between border-r-4 border-gold relative overflow-hidden">
+                <div class="absolute -left-10 -top-10 opacity-10"><i data-lucide="library" class="w-48 h-48"></i></div>
+                <div class="mb-4 md:mb-0 relative z-10">
+                    <h2 class="text-3xl font-extrabold text-gold mb-2">אוצר השיעורים הגדול</h2>
+                    <p class="text-gray-300 text-sm md:text-base max-w-2xl">התכנים בתווית "מנויים" פתוחים לחברי מסלול הפרימיום בלבד. הצטרפו כעת וקבלו גישה חופשית לכל מאגר השיעורים וההדרכות.</p>
+                </div>
+                <button onclick="switchTab('about')" class="bg-gold hover:bg-gold-hover text-navy-900 font-bold py-3 px-8 rounded-xl transition duration-300 whitespace-nowrap shadow-lg flex items-center gap-2 relative z-10">
+                    לפרטים והצטרפות <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 mb-6 flex flex-col lg:flex-row gap-4 items-center">
+                <div class="relative flex-grow w-full">
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400"><i data-lucide="search" class="w-5 h-5"></i></span>
+                    <input type="text" id="searchInput" placeholder="חיפוש חופשי חי (שם שיעור, רב)..." class="w-full pl-4 pr-12 py-3 rounded-xl border border-gray-300 dark:border-slate-600 focus:ring-2 focus:ring-gold outline-none bg-gray-50 dark:bg-slate-900 dark:text-white transition font-medium">
+                    <div id="searchHistoryDropdown" class="absolute top-full left-0 right-0 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl mt-1 shadow-xl z-50 hidden flex flex-col overflow-hidden">
+                    </div>
+                </div>
+                <select id="lecturerFilter" class="w-full lg:w-64 py-3 px-4 rounded-xl border border-gray-300 dark:border-slate-600 focus:ring-2 focus:ring-gold outline-none bg-gray-50 dark:bg-slate-900 dark:text-white transition font-medium appearance-none cursor-pointer">
+                    <option value="">כל הרבנים והמרצים</option>
+                </select>
+                <label for="newFilterToggle" class="flex items-center justify-between lg:justify-start w-full lg:w-auto cursor-pointer select-none bg-gray-50 dark:bg-slate-900 px-5 py-3 rounded-xl border border-gray-300 dark:border-slate-600 transition hover:border-gold dark:hover:border-gold">
+                    <span class="mr-3 text-sm font-bold text-gray-700 dark:text-gray-300">חדשים בלבד</span>
+                    <div class="relative">
+                        <input type="checkbox" id="newFilterToggle" class="sr-only peer">
+                        <div class="block bg-gray-300 dark:bg-slate-700 w-12 h-6 rounded-full peer-checked:bg-gold transition-colors"></div>
+                        <div class="absolute right-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:-translate-x-6 shadow-sm"></div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 min-h-[400px]">
+                <div class="flex justify-center mb-6">
+                    <div class="bg-gray-100 dark:bg-slate-900 p-1.5 rounded-xl inline-flex shadow-inner">
+                        <button onclick="switchViewMode('lecturers')" id="btnViewLecturers" class="px-6 py-2.5 rounded-lg font-bold text-sm transition bg-white dark:bg-slate-700 text-navy-900 dark:text-white shadow flex items-center gap-2">
+                            <i data-lucide="users" class="w-4 h-4"></i> לפי שמות הרבנים
+                        </button>
+                        <button onclick="switchViewMode('folders')" id="btnViewFolders" class="px-6 py-2.5 rounded-lg font-bold text-sm transition text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-2">
+                            <i data-lucide="folder-tree" class="w-4 h-4"></i> סייר התיקיות
+                        </button>
+                    </div>
+                </div>
+                <div id="breadcrumbsContainer" class="mb-6 pb-4 border-b border-gray-100 dark:border-slate-700 flex items-center gap-2 overflow-x-auto whitespace-nowrap breadcrumbs-scroll text-sm font-semibold"></div>
+                <div id="searchResultsHeader" class="hidden mb-6 pb-4 border-b border-gray-100 dark:border-slate-700">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">תוצאות חיפוש: <span id="searchCount" class="text-gold"></span></h3>
+                    <button onclick="clearSearch()" class="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-1 font-medium flex items-center gap-1"><i data-lucide="x-circle" class="w-3 h-3"></i> נקה חיפוש</button>
+                </div>
+                <div id="explorerGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+
+        <!-- ================= דף לוח שיעורים (Schedule) ================= -->
+        <div id="schedule" class="tab-content">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-navy-900 dark:text-white inline-block relative">
+                    לוח זמני השיעורים
+                    <span class="absolute -bottom-3 right-0 w-full h-1.5 bg-gold rounded-full opacity-80"></span>
+                </h2>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row gap-8 items-start">
+                <div class="w-full lg:w-1/4 bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm p-5 sticky top-24">
+                    <h3 class="font-bold text-lg text-slate-800 dark:text-white mb-4 border-b border-gray-100 dark:border-slate-700 pb-3 flex items-center gap-2"><i data-lucide="filter" class="w-5 h-5 text-gold"></i> סינון לפי חודשים</h3>
+                    <div id="monthFilterContainer" class="space-y-2">
+                        <div class="text-gray-400 text-sm flex justify-center py-4"><i data-lucide="loader-2" class="w-6 h-6 animate-spin"></i></div>
+                    </div>
+                </div>
+                <div class="w-full lg:w-3/4">
+                    <!-- אזור החיפוש והסינונים -->
+                    <div class="mb-6 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 flex flex-col md:flex-row gap-4">
+                        <div class="relative flex-grow">
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400"><i data-lucide="search" class="w-5 h-5"></i></span>
+                            <input type="text" id="scheduleLecturerSearch" oninput="handleScheduleSearch()" placeholder="חיפוש מרצה / רב בלוח..." class="w-full pl-4 pr-12 py-3 rounded-xl border border-gray-300 dark:border-slate-600 focus:ring-2 focus:ring-gold outline-none bg-gray-50 dark:bg-slate-900 dark:text-white transition font-medium">
+                        </div>
+                        
+                        <!-- סינונים חדשים ומעוצבים (ללא סמלים) -->
+                        <div class="relative w-full md:w-48 group">
+                            <select id="scheduleAudienceFilter" onchange="handleScheduleSearch()" class="w-full py-3 pl-10 pr-4 rounded-xl border-2 border-gray-200 dark:border-slate-600 hover:border-gold dark:hover:border-gold focus:ring-2 focus:ring-gold outline-none bg-white dark:bg-slate-800 dark:text-white transition font-bold appearance-none cursor-pointer shadow-sm text-slate-800">
+                                <option value="all">כל הקהלים</option>
+                                <option value="זוגי">זוגי</option>
+                                <option value="גברים">גברים</option>
+                                <option value="נשים">נשים</option>
+                            </select>
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400 group-hover:text-gold transition">
+                                <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+
+                        <div class="relative w-full md:w-56 group">
+                            <select id="scheduleAccessFilter" onchange="handleScheduleSearch()" class="w-full py-3 pl-10 pr-4 rounded-xl border-2 border-gray-200 dark:border-slate-600 hover:border-gold dark:hover:border-gold focus:ring-2 focus:ring-gold outline-none bg-white dark:bg-slate-800 dark:text-white transition font-bold appearance-none cursor-pointer shadow-sm text-slate-800">
+                                <option value="all">כל סוגי הגישה</option>
+                                <option value="פתוח">פתוח לכולם</option>
+                                <option value="מנויים">למנויים בלבד</option>
+                            </select>
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400 group-hover:text-gold transition">
+                                <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                    </div> <!-- כאן הייתה חסרה תגית הסגירה! -->
+
+                    <!-- אזור הצגת השיעורים -->
+                    <div id="scheduleContainer" class="space-y-6">
+                        <div class="text-center py-16 text-gray-500 bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2 text-gold"></i>טוען את לוח השיעורים...</div>
+                    </div>
+                    <div class="mt-8 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 p-5 rounded-2xl text-sm text-amber-800 dark:text-amber-200 font-medium">
+                        <strong>כללי המרחב:</strong> אין התחייבות, והסילבוס נתון לשינויים.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= דף בית ההוראה ================= -->
+        <div id="beit-horaah" class="tab-content">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-navy-900 dark:text-white inline-block relative">
+                    בית ההוראה המרכזי
+                    <span class="absolute -bottom-3 right-0 w-full h-1.5 bg-gold rounded-full opacity-80"></span>
+                </h2>
+                <p class="text-gray-500 dark:text-gray-400 mt-4 font-medium max-w-2xl mx-auto">מענה הלכתי מדויק, מקצועי ודיסקרטי לשאלות בכל תחומי החיים, הבית והמשפחה, בהכוונת מורינו הגר"ע פריד שליט"א.</p>
+            </div>
+            
+            <div class="max-w-5xl mx-auto space-y-8">
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 border border-gray-100 dark:border-slate-700 shadow-sm">
+                    <div class="flex flex-col md:flex-row gap-8 items-center">
+                        <div class="flex-grow space-y-4">
+                            <h3 class="text-2xl font-bold text-navy-900 dark:text-white flex items-center gap-2"><i data-lucide="shield-check" class="text-gold w-6 h-6"></i> ייחודיות ודיסקרטיות מוחלטת</h3>
+                            <p class="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base">
+                                בשונה מפלטפורמות אחרות, בית ההוראה שלנו מתאפיין ב<strong>שמירה מוחלטת על פרטיות השואלים</strong>. כל שאלה מנותבת ישירות לרב המשיב באופן מאובטח, ללא חשיפת פרטים מזהים מעבר לנדרש.<br><br>
+                                צוות הרבנים נבחר בקפידה רבה ומונחה לתת מענה רגיש, מהיר ומדויק, מתוך הבנת המורכבות הייחודית של שאלות שלום בית, הדרכה, הלכה וייעוץ זוגי. הכל ניתן בדיסקרטיות מלאה.
+                            </p>
+                            <a href="https://www.pulseem.com/pulseem/LinkRedirect.axd?LinkID=260971742&ClientID=359051697" target="_blank" class="inline-flex items-center gap-2 bg-navy-900 hover:bg-navy-800 dark:bg-gold dark:hover:bg-gold-hover text-white dark:text-navy-900 font-bold py-3 px-6 rounded-xl transition shadow-md mt-2">
+                                <i data-lucide="send" class="w-5 h-5"></i> לחץ כאן לשליחת שאלה לבית ההוראה
+                            </a>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <div class="w-32 h-32 md:w-48 md:h-48 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center border-4 border-gold/20 shadow-inner">
+                                <i data-lucide="message-circle-question" class="w-16 h-16 md:w-24 md:h-24 text-gold opacity-80"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-navy-900 dark:text-white mb-6 flex items-center gap-2 justify-center"><i data-lucide="heart" class="text-gold w-5 h-5"></i> מה אומרים השואלים?</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative">
+                            <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700"></i>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-4 font-medium">"תודה רבה על המענה המהיר והברור! הדיסקרטיות והרגישות בתשובה עזרו לנו מאוד לקבל החלטה נכונה ברוגע. אין לכם תחליף."</p>
+                            <span class="text-xs font-bold text-navy-900 dark:text-gray-400 block">- א.מ., מרכז הארץ</span>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative">
+                            <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700"></i>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-4 font-medium">"הדיסקרטיות והרגישות של הרבנים המשיבים פשוט ראויה לציון. הרגשנו שיש מי שמבין את המצב לאשורו. יישר כוח עצום לכל צוות בית ההוראה."</p>
+                            <span class="text-xs font-bold text-navy-900 dark:text-gray-400 block">- משפחת ל., ירושלים</span>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative">
+                            <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700"></i>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-4 font-medium">"מוקד של אמת והלכה צרופה. אנחנו נעזרים בכם בכל שאלה סבוכה שצצה, ויודעים שהתשובה מגיעה מתוך עיון מעמיק והכוונה טהורה."</p>
+                            <span class="text-xs font-bold text-navy-900 dark:text-gray-400 block">- ד. כהן, דרום</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= דף פרטים ומידע (About) ================= -->
+        <div id="about" class="tab-content">
+            <div class="bg-white dark:bg-slate-800 p-8 md:p-12 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 max-w-5xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-navy-900 dark:text-white inline-block relative">
+                        מידע, הצטרפות ותרומות
+                        <span class="absolute -bottom-3 right-0 w-full h-1.5 bg-gold rounded-full opacity-80"></span>
+                    </h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <div class="space-y-6">
+                        <div class="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2 text-gold"><i data-lucide="info" class="w-6 h-6"></i> מי אנחנו</h3>
+                            <p class="text-gray-700 dark:text-gray-300 leading-relaxed text-sm font-medium">פורום הבית היהודי, העומד בנשיאותו של מורינו הגאון הגדול ר' עמרם פריד שליט"א, שם לו למטרה להנגיש הדרכת חתנים, הדרכת כלות, ייעוץ זוגי ושיעורי הלכה באיכות הגבוהה ביותר ולכל דורש.</p>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border-2 border-gold shadow-md">
+                            <h3 class="text-xl font-bold text-navy-900 dark:text-white mb-4 flex items-center gap-2"><i data-lucide="gem" class="w-6 h-6 text-gold"></i> מסלולי הגישה לתכנים</h3>
+                            <div class="mb-5">
+                                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-lg">המרחב הרגיל</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">גישה לשיעורים פתוחים. ההצטרפות מתבצעת על ידי הרשמה לרשימת התפוצה.</p>
+                                <button onclick="openMailingListModal()" class="text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white px-5 py-2.5 rounded-xl font-bold transition flex items-center gap-2 w-max"><i data-lucide="mail-plus" class="w-4 h-4"></i> להרשמה לתפוצה</button>
+                            </div>
+                            <div class="w-full h-px bg-gray-100 dark:bg-slate-700 my-5"></div>
+                            <div>
+                                <h4 class="font-bold text-amber-600 dark:text-gold text-lg">מרחב פרימיום (מנויים)</h4>
+                                <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-2 mb-4 mt-3 list-none">
+                                    <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mt-0.5"></i> גישה חופשית לכל שיעורי הוידאו והשמע</li>
+                                    <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mt-0.5"></i> צפייה והורדה של סיכומים כתובים</li>
+                                    <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mt-0.5"></i> המשך צפייה אוטומטי מהיכן שעצרת</li>
+                                </ul>
+                                <a href="https://forms.google.com" target="_blank" class="inline-flex items-center gap-2 text-sm bg-navy-900 hover:bg-navy-800 dark:bg-gold dark:hover:bg-gold-hover dark:text-navy-900 text-white px-5 py-2.5 rounded-xl font-bold transition shadow-md"><i data-lucide="crown" class="w-4 h-4"></i> טופס הצטרפות לפרימיום</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-2xl border border-blue-100 dark:border-blue-800/50">
+                            <h3 class="text-xl font-bold text-blue-900 dark:text-blue-400 mb-3 flex items-center gap-2"><i data-lucide="clipboard-edit" class="w-6 h-6"></i> סבסוד והנחות</h3>
+                            <p class="text-sm text-blue-800 dark:text-blue-300 mb-4 font-medium">ניתן להגיש בקשה לקבלת סבסוד להדרכת חתנים / כלות וייעוץ זוגי.</p>
+                            <a href="https://forms.gle/KT6rZxXFPd1VSLyi7" target="_blank" class="text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-xl inline-flex items-center gap-2 transition shadow"><i data-lucide="external-link" class="w-4 h-4"></i> לטופס בקשת סבסוד</a>
+                        </div>
+                        <div class="bg-green-50 dark:bg-green-900/20 p-6 rounded-2xl border border-green-100 dark:border-green-800/50">
+                            <h3 class="text-xl font-bold text-green-900 dark:text-green-400 mb-3 flex items-center gap-2"><i data-lucide="heart-handshake" class="w-6 h-6"></i> תרומות ושותפות</h3>
+                            <p class="text-sm text-green-800 dark:text-green-300 mb-5 font-medium">היו שותפים בעשייה העצומה למען בניין הבתים בישראל.</p>
+                            <div class="space-y-3">
+                                <a href="#" class="flex items-center justify-center gap-2 w-full text-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition shadow-md"><i data-lucide="gift" class="w-5 h-5"></i> תרומה לפורום הבית היהודי</a>
+                                <a href="#" class="flex items-center justify-center gap-2 w-full text-center border-2 border-green-600 dark:border-green-500 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/50 font-bold py-3 rounded-xl transition"><i data-lucide="building" class="w-5 h-5"></i> תרומה לבית ההוראה</a>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><i data-lucide="messages-square" class="w-6 h-6 text-gold"></i> פניות ושאלות</h3>
+                            <div class="space-y-4 text-sm font-medium">
+                                <div>
+                                    <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-1">פניות לפורום הבית היהודי:</h4>
+                                    <p class="text-gray-600 dark:text-gray-400 mb-2">לכל שאלה טכנית או בקשה לגבי האתר.</p>
+                                    <div class="flex flex-wrap gap-x-4 gap-y-2 mt-1">
+                                        <a href="mailto:jewish1home@gmail.com" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"><i data-lucide="mail" class="w-4 h-4"></i> jewish1home@gmail.com</a>
+                                    </div>
+                                </div>
+                                <div class="w-full h-px bg-gray-200 dark:bg-slate-700"></div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-2">משוב והוועדה הרוחנית:</h4>
+                                    <div class="flex flex-col gap-2">
+                                        <a
+										<a href="https://www.pulseem.com/pulseem/LinkRedirect.axd?LinkID=260971746&ClientID=359051697&subject=משוב על השיעור: ${item.name}" target="_blank" ...="" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"><i data-lucide="send" class="w-4 h-4"></i> לשליחת משוב והצעות ייעול</a>
+                                        <a href="https://www.pulseem.com/pulseem/LinkRedirect.axd?LinkID=260971747&ClientID=359051697" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"><i data-lucide="shield-check" class="w-4 h-4"></i> פנייה לוועדה הרוחנית</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- אזור פידבקים רחב ונגלל (Marquee) -->
+                <div class="mt-12 bg-white dark:bg-slate-800 rounded-3xl p-8 border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden relative">
+                    <div class="text-center mb-10">
+                        <h3 class="text-2xl md:text-3xl font-extrabold text-navy-900 dark:text-white flex items-center justify-center gap-3">
+                            <i data-lucide="message-square-heart" class="text-gold w-8 h-8"></i> מה אומרים הלומדים והשואלים?
+                        </h3>
+                    </div>
+
+                    <!-- שורה ראשונה זזה ימינה/שמאלה -->
+                    <div class="marquee-wrapper mb-6" dir="ltr">
+                        <div class="marquee-content">
+                            <!-- 10 פידבקים קבוצה 1 -->
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"בזכות השיעורים באתר, ההכנה לחתונה הייתה הרבה יותר רגועה וממוקדת. ממליץ בחום לכל חתן!"</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- א. כהן, ירושלים</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"המענה בבית ההוראה הציל אותנו מספקות רבים. הכל ברור, מהיר ודיסקרטי."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- י.מ., בני ברק</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"ייעוץ זוגי על פי דעת תורה ששינה לנו את החיים. תודה רבה לרבנים."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- משפחת לוי</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"שיעורי ההלכה מרתקים ומקיפים. אני מאזין להם בדרך לעבודה כל בוקר."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- דוד, אלעד</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"הסיכומים הכתובים עוזרים לי מאוד לחזור על החומר. יוזמה מבורכת."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- ש. רבינוביץ</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"אין מילים לתאר את העזרה שקיבלנו מהפורום בתחילת דרכנו כזוג צעיר."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- חתן טרי</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"האתר נוח מאוד לשימוש והשיעורים מסודרים להפליא. קל למצוא כל נושא."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- משתמש אנונימי</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"זכינו לקבל הדרכה צמודה שהעמידה לנו את הבית על אדני התורה."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- משפחת כ., בית שמש</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"תשובות בהלכה ברורות ופסקניות. אשריכם שאתם מזכים את הרבים."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- אברך כולל, ירושלים</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"מקום של תורה והלכה שכיף ונעים להיכנס אליו בכל יום."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- יצחק, פתח תקווה</span>
+                            </div>
+                        </div>
+                        
+                        <!-- שכפול מדויק של שורה 1 ליצירת לולאה אינסופית -->
+                        <div class="marquee-content" aria-hidden="true">
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"בזכות השיעורים באתר, ההכנה לחתונה הייתה הרבה יותר רגועה וממוקדת. ממליץ בחום לכל חתן!"</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- א. כהן, ירושלים</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"המענה בבית ההוראה הציל אותנו מספקות רבים. הכל ברור, מהיר ודיסקרטי."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- י.מ., בני ברק</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"ייעוץ זוגי על פי דעת תורה ששינה לנו את החיים. תודה רבה לרבנים."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- משפחת לוי</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"שיעורי ההלכה מרתקים ומקיפים. אני מאזין להם בדרך לעבודה כל בוקר."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- דוד, אלעד</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"הסיכומים הכתובים עוזרים לי מאוד לחזור על החומר. יוזמה מבורכת."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- ש. רבינוביץ</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"אין מילים לתאר את העזרה שקיבלנו מהפורום בתחילת דרכנו כזוג צעיר."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- חתן טרי</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"האתר נוח מאוד לשימוש והשיעורים מסודרים להפליא. קל למצוא כל נושא."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- משתמש אנונימי</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"זכינו לקבל הדרכה צמודה שהעמידה לנו את הבית על אדני התורה."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- משפחת כ., בית שמש</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"תשובות בהלכה ברורות ופסקניות. אשריכם שאתם מזכים את הרבים."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- אברך כולל, ירושלים</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"מקום של תורה והלכה שכיף ונעים להיכנס אליו בכל יום."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- יצחק, פתח תקווה</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- שורה שנייה זזה לכיוון ההפוך (Reverse) -->
+                    <div class="marquee-wrapper" dir="ltr">
+                        <div class="marquee-content" style="animation-direction: reverse; animation-duration: 55s;">
+                            <!-- 10 פידבקים קבוצה 2 -->
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"תודה על האפשרות לשאול שאלות מורכבות בדיסקרטיות מלאה ולקבל מענה מהיר."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- ש.א.</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"השיעורים בנושא שלום בית פקחו לי את העיניים. חובה לכל בית יהודי."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- אברהם</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"פורום מושקע, תוכן איכותי ונגיש. יישר כוח לכל העוסקים במלאכה."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- משה ע.</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"הדרכת החתנים שקיבלתי דרך הפורום הייתה יסודית ומקצועית מעל ומעבר."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- ח. גולדברג</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"הכל פועל בצורה מושלמת, נוח להאזין במובייל. תודה רבה על ההשקעה העצומה."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- מנוי פרימיום</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"חיפשתי מקום שמרכז את כל ההלכות הנחוצות לחיי היומיום ומצאתי."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- ר. שטרן</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"המלצתי לכל החברים מהכולל להצטרף לפורום. אוצר בלום של ידע ויראת שמים."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- נ. ברקוביץ</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"השאלות והתשובות בבית ההוראה מחכימות מאוד. אני קורא ולומד המון."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- אליעזר</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"צוות מסור שרואה מול עיניו רק את טובת הפונים. הרגשנו בידיים טובות."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- משפחת ד.</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"כל שיעור הוא פנינה. המרצים מעבירים את החומר בבהירות, במתיקות ובנועם."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- מאזין קבוע</span>
+                            </div>
+                        </div>
+                        
+                        <!-- שכפול מדויק של שורה 2 ליצירת לולאה אינסופית -->
+                        <div class="marquee-content" aria-hidden="true" style="animation-direction: reverse; animation-duration: 55s;">
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"תודה על האפשרות לשאול שאלות מורכבות בדיסקרטיות מלאה ולקבל מענה מהיר."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- ש.א.</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"השיעורים בנושא שלום בית פקחו לי את העיניים. חובה לכל בית יהודי."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- אברהם</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"פורום מושקע, תוכן איכותי ונגיש. יישר כוח לכל העוסקים במלאכה."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- משה ע.</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"הדרכת החתנים שקיבלתי דרך הפורום הייתה יסודית ומקצועית מעל ומעבר."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- ח. גולדברג</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"הכל פועל בצורה מושלמת, נוח להאזין במובייל. תודה רבה על ההשקעה העצומה."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- מנוי פרימיום</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"חיפשתי מקום שמרכז את כל ההלכות הנחוצות לחיי היומיום ומצאתי."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- ר. שטרן</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"המלצתי לכל החברים מהכולל להצטרף לפורום. אוצר בלום של ידע ויראת שמים."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- נ. ברקוביץ</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"השאלות והתשובות בבית ההוראה מחכימות מאוד. אני קורא ולומד המון."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- אליעזר</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"צוות מסור שרואה מול עיניו רק את טובת הפונים. הרגשנו בידיים טובות."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- משפחת ד.</span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border-t-4 border-gold shadow-sm relative w-80 flex-shrink-0 flex flex-col" dir="rtl">
+                                <i data-lucide="quote" class="w-8 h-8 absolute top-4 left-4 text-gray-200 dark:text-slate-700/50"></i>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm italic relative z-10 mb-6 font-medium leading-relaxed">"כל שיעור הוא פנינה. המרצים מעבירים את החומר בבהירות, במתיקות ובנועם."</p>
+                                <span class="text-xs font-extrabold text-navy-900 dark:text-gray-400 block mt-auto">- מאזין קבוע</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ================= דף צפיתי לאחרונה (History) ================= -->
+        <div id="history" class="tab-content">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-navy-900 dark:text-white inline-block relative">
+                        היסטוריית הצפייה שלי
+                        <span class="absolute -bottom-3 right-0 w-full h-1.5 bg-purple-500 rounded-full opacity-80"></span>
+                    </h2>
+                    <p class="text-gray-500 dark:text-gray-400 mt-4 font-medium">חזור בדיוק למקום שבו עצרת. כל ההיסטוריה שלך מגובה בענן.</p>
+                </div>
+                
+                <div id="notLoggedInState" class="bg-white dark:bg-slate-800 p-12 rounded-3xl shadow-sm border border-gray-200 dark:border-slate-700 text-center hidden">
+                    <div class="w-20 h-20 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="lock" class="w-10 h-10 text-slate-400"></i></div>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-3">יש להתחבר כדי לראות היסטוריה</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-8 max-w-sm mx-auto">ההיסטוריה נשמרת באופן אישי ומאובטח עבור כל משתמש רשום במערכת.</p>
+                    <button onclick="toggleLogin()" class="bg-navy-900 hover:bg-navy-800 dark:bg-gold dark:text-navy-900 text-white font-bold py-3.5 px-8 rounded-xl transition shadow-md flex items-center justify-center gap-2 mx-auto"><i data-lucide="log-in" class="w-5 h-5"></i> לחץ כאן להתחברות / הרשמה</button>
+                </div>
+
+                <div id="loggedInState" class="space-y-4">
+                    <div id="historyContainer" class="space-y-4">
+                        <div class="text-center py-16 text-gray-500 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2 text-purple-500"></i>טוען היסטוריה...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= דף מאמרים (Blog) ================= -->
+        <div id="blog" class="tab-content">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-navy-900 dark:text-white inline-block relative">
+                    מאמרים
+                    <span class="absolute -bottom-3 right-0 w-full h-1.5 bg-gold rounded-full opacity-80"></span>
+                </h2>
+                <p class="text-gray-500 dark:text-gray-400 mt-4 font-medium">מאמרים, סיכומים והדרכות מפי רבני ומרצי הפורום.</p>
+            </div>
+            
+            <div id="articlesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <div class="col-span-full py-16 text-center text-gray-500 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 font-medium text-lg flex flex-col items-center justify-center"><i data-lucide="loader-2" class="w-10 h-10 animate-spin text-gold mb-3"></i> טוען מאמרים מהמאגר...</div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- כפתור חזרה למעלה -->
+    <button id="backToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-24 sm:bottom-8 left-6 bg-navy-900 dark:bg-gold text-white dark:text-navy-900 p-3 rounded-full shadow-xl opacity-0 translate-y-10 transition-all duration-300 z-40 hover:scale-110">
+        <i data-lucide="arrow-up" class="w-6 h-6"></i>
+    </button>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="mt-auto border-t border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors">
+        <div class="container mx-auto px-4 py-6 md:py-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+            <div class="flex items-center gap-2 mb-4 md:mb-0">
+                <i data-lucide="shield" class="w-5 h-5 text-gold"></i>
+                <p class="font-medium">© כל הזכויות שמורות לפורום הבית היהודי</p>
+            </div>
+            <p class="text-[11px] uppercase tracking-widest font-bold bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
+                נבנה על ידי <a href="https://xsx-x.github.io/Good-heart/" class="text-navy-900 dark:text-white hover:text-gold dark:hover:text-gold transition">לב טוב</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- ==================== Mobile Bottom Nav ==================== -->
+    <nav class="flex sm:hidden fixed bottom-0 w-full bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 z-50 justify-around items-center pb-safe text-[10px] font-bold text-gray-500 dark:text-gray-400 shadow-[0_-5px_10px_rgba(0,0,0,0.05)] transition-colors">
+        <button onclick="switchTab('home')" class="mobile-nav-btn flex-1 py-3 flex flex-col items-center gap-1 hover:text-gold transition"><i data-lucide="home" class="w-5 h-5"></i>ראשי</button>
+        <button onclick="switchTab('library')" class="mobile-nav-btn flex-1 py-3 flex flex-col items-center gap-1 hover:text-gold transition"><i data-lucide="library" class="w-5 h-5"></i>שיעורים</button>
+        <button onclick="switchTab('schedule')" class="mobile-nav-btn flex-1 py-3 flex flex-col items-center gap-1 hover:text-gold transition"><i data-lucide="calendar-days" class="w-5 h-5"></i>לוח</button>
+        <button onclick="switchTab('beit-horaah')" class="mobile-nav-btn flex-1 py-3 flex flex-col items-center gap-1 hover:text-gold transition"><i data-lucide="message-circle-question" class="w-5 h-5"></i>הוראה</button>
+        <button onclick="switchTab('blog')" class="mobile-nav-btn flex-1 py-3 flex flex-col items-center gap-1 hover:text-gold transition"><i data-lucide="file-text" class="w-5 h-5"></i>מאמרים</button>
+    </nav>
+
+    <!-- ==================== Floating Audio Player ==================== -->
+    <div id="floatingAudioPlayer" class="hidden-player fixed bottom-16 sm:bottom-0 left-0 w-full bg-navy-900 dark:bg-black border-t-2 border-purple-500 z-40 shadow-[0_-10px_20px_rgba(0,0,0,0.2)] text-white p-3 sm:p-4">
+        <div class="container mx-auto flex flex-col sm:flex-row items-center gap-4 justify-between">
+            <div class="flex items-center gap-3 w-full sm:w-auto overflow-hidden">
+                <div class="w-10 h-10 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse"><i data-lucide="headphones" class="w-5 h-5"></i></div>
+                <div class="truncate flex-grow">
+                    <h4 id="audioPlayerTitle" class="font-bold text-sm truncate">טוען שיעור...</h4>
+                    <p id="audioPlayerLecturer" class="text-xs text-gray-400 truncate"></p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4 w-full sm:w-auto">
+                <button onclick="toggleAudioSpeed()" id="audioSpeedBtn" class="text-xs bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded font-bold transition w-12 text-center border border-slate-600">x1.0</button>
+				<audio id="mainAudioElement" controls="" class="h-10 w-full min-w-[200px] sm:min-w-[350px] outline-none flex-grow"></audio>
+                <button onclick="closeAudioPlayer()" class="text-gray-400 hover:text-white bg-slate-800 hover:bg-red-500/20 p-1.5 rounded-lg transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== חלונות קופצים (Modals) ==================== -->
+    <div id="newsletterPopup" class="fixed bottom-20 sm:bottom-4 right-4 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-2xl border-2 border-gold w-80 z-50 transform translate-y-[150%] opacity-0 transition-all duration-500">
+        <button onclick="closeNewsletterPopup()" class="absolute top-3 left-3 text-gray-400 hover:text-red-500 bg-gray-100 dark:bg-slate-700 rounded-full p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <div class="flex items-center gap-3 mb-3">
+            <i data-lucide="bell-ring" class="w-6 h-6 text-gold animate-bounce"></i>
+            <h3 class="font-bold text-navy-900 dark:text-white text-lg">הישארו מעודכנים!</h3>
+        </div>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 font-medium">הצטרפו לרשימת התפוצה שלנו וקבלו עדכונים על שיעורים חדשים.</p>
+        <div class="flex gap-2">
+            <input type="email" placeholder="האימייל שלך..." class="w-full border dark:border-slate-600 rounded-lg px-3 py-2 text-sm outline-none focus:border-gold dark:bg-slate-900 dark:text-white transition">
+            <button class="bg-gold text-navy-900 hover:bg-gold-hover px-4 py-2 rounded-lg text-sm font-bold transition shadow"><i data-lucide="send" class="w-4 h-4"></i></button>
+        </div>
+    </div>
+
+    <div id="premiumModal" class="modal">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 max-w-md w-full text-center relative mx-4 shadow-2xl border border-gray-100 dark:border-slate-700">
+            <button onclick="closeModal('premiumModal')" class="absolute top-4 left-4 text-gray-400 hover:text-gray-800 dark:hover:text-white bg-gray-100 dark:bg-slate-700 p-2 rounded-full transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <div class="w-20 h-20 bg-amber-50 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="crown" class="w-10 h-10 text-gold"></i></div>
+            <h3 class="text-2xl font-extrabold text-navy-900 dark:text-white mb-3">תוכן לחברי פרימיום</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-8 font-medium leading-relaxed">השיעור שביקשת זמין לחברי מסלול המנויים בלבד. הצטרפו עכשיו כדי לקבל גישה מלאה לכל השיעורים והסיכומים באתר!</p>
+            <div class="space-y-3">
+
+				<button onclick="closeModal('premiumModal'); switchTab('about');" class="flex items-center justify-center gap-2 w-full bg-navy-900 hover:bg-navy-800 dark:bg-gold dark:hover:bg-gold-hover dark:text-navy-900 text-white font-bold py-3.5 rounded-xl transition shadow-md">
+					<i data-lucide="info" class="w-5 h-5"></i> לפרטים והצטרפות
+				</button>
+                <button onclick="closeModal('premiumModal')" class="block w-full text-gray-500 hover:text-navy-900 dark:hover:text-white font-bold py-2 transition">חזור לאוצר השיעורים</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoModal" class="modal z-[60]">
+        <div class="bg-slate-900 rounded-2xl w-full max-w-4xl mx-4 relative overflow-hidden flex flex-col max-h-[90vh] shadow-2xl border border-slate-700">
+            <div class="flex justify-between items-center bg-slate-800 p-4 border-b border-slate-700/50">
+                <div class="flex items-center gap-3 overflow-hidden pr-2">
+                    <i data-lucide="monitor-play" class="w-5 h-5 text-blue-400 flex-shrink-0"></i>
+                    <h3 id="videoModalTitle" class="text-white font-bold text-lg truncate">צפייה בשיעור</h3>
+                </div>
+                <button onclick="closeModal('videoModal')" class="text-slate-300 hover:text-white bg-slate-700 hover:bg-red-500 p-2 rounded-lg transition flex-shrink-0"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <div class="aspect-video w-full bg-black relative flex-grow min-h-[250px] sm:min-h-[400px]">
+                <iframe id="videoIframe" class="absolute top-0 left-0 w-full h-full" src="" frameborder="0" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="p-3 bg-slate-800 text-center flex justify-center border-t border-slate-700/50">
+                <a id="driveBackupLink" href="#" target="_blank" class="text-slate-400 hover:text-white transition flex items-center gap-2 font-medium bg-slate-700/50 px-4 py-2 rounded-lg"><i data-lucide="external-link" class="w-4 h-4"></i> פתח בחלון חדש (Drive)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- מודאל התחברות חדש (אימייל/סיסמה) -->
+    <div id="authModal" class="modal z-[70]">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-sm w-full text-center relative mx-4 shadow-2xl border border-gray-100 dark:border-slate-700">
+            <button onclick="closeModal('authModal')" class="absolute top-4 left-4 text-gray-400 hover:text-gray-800 dark:hover:text-white bg-gray-100 dark:bg-slate-800 p-2 rounded-full transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <div class="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="user" class="w-8 h-8 text-blue-500 dark:text-blue-400"></i></div>
+            <h3 id="authModalTitle" class="text-2xl font-bold text-navy-900 dark:text-white mb-6">התחברות</h3>
+            
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4 text-right">
+                <div id="nameFieldContainer" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">שם מלא</label>
+                    <input type="text" id="authName" class="w-full border border-gray-300 dark:border-slate-600 rounded-xl px-4 py-2 bg-gray-50 dark:bg-slate-800 dark:text-white outline-none focus:border-gold transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">כתובת אימייל</label>
+                    <input type="email" id="authEmail" required class="w-full border border-gray-300 dark:border-slate-600 rounded-xl px-4 py-2 bg-gray-50 dark:bg-slate-800 dark:text-white outline-none focus:border-gold transition" dir="ltr">
+                </div>
+                <div id="passwordFieldContainer">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">סיסמה (לפחות 6 תווים)</label>
+                    <input type="password" id="authPassword" class="w-full border border-gray-300 dark:border-slate-600 rounded-xl px-4 py-2 bg-gray-50 dark:bg-slate-800 dark:text-white outline-none focus:border-gold transition" dir="ltr">
+                </div>
+
+                <div id="authErrorMsg" class="text-red-500 text-sm font-bold hidden text-center bg-red-50 dark:bg-red-900/20 p-2 rounded-lg"></div>
+
+                <button type="submit" id="authSubmitBtn" class="w-full bg-navy-900 hover:bg-navy-800 dark:bg-gold dark:hover:bg-gold-hover dark:text-navy-900 text-white font-bold py-3 rounded-xl transition shadow flex justify-center items-center gap-2">
+                    <i data-lucide="log-in" id="authSubmitIcon" class="w-5 h-5"></i> <span id="authSubmitText">היכנס למערכת</span>
+                </button>
+            </form>
+
+            <div class="mt-6 border-t border-gray-100 dark:border-slate-700 pt-4 flex flex-col gap-2 text-sm">
+                <button type="button" id="authToggleModeBtn" onclick="switchAuthMode('register')" class="text-gray-600 dark:text-gray-400 hover:text-gold dark:hover:text-gold font-medium transition">אין לך משתמש? לחץ כאן להרשמה</button>
+                <div id="forgotPasswordContainer">
+                    <button type="button" onclick="switchAuthMode('reset')" class="text-gray-500 dark:text-gray-500 hover:text-gold dark:hover:text-gold transition">שכחת סיסמה? שחזור</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="messageModal" class="modal z-[70]">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 max-w-sm w-full text-center relative mx-4 shadow-2xl border border-gray-100 dark:border-slate-700">
+            <div class="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="info" class="w-8 h-8 text-blue-500"></i></div>
+            <h3 class="text-xl font-bold text-navy-900 dark:text-white mb-3">הודעת מערכת</h3>
+            <p id="messageModalText" class="text-gray-700 dark:text-gray-300 mb-6 text-sm font-medium whitespace-pre-line leading-relaxed"></p>
+            <button onclick="closeModal('messageModal')" class="w-full bg-navy-900 hover:bg-navy-800 dark:bg-gold dark:text-navy-900 text-white font-bold py-3 rounded-xl transition shadow">הבנתי, תודה</button>
+        </div>
+    </div>
+
+    <div id="articleModal" class="modal z-[60]">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-10 max-w-4xl w-full relative mx-4 max-h-[90vh] flex flex-col shadow-2xl border border-gray-200 dark:border-slate-700">
+            <div class="flex justify-between items-start mb-6 border-b border-gray-100 dark:border-slate-800 pb-4">
+                <div class="pr-2 w-full">
+                    <div class="flex items-center justify-between mb-2">
+                        <span id="modalArticleCategory" class="text-xs font-extrabold text-white bg-cyan-600 px-3 py-1 rounded-full shadow-sm"></span>
+                        <span id="modalArticleReadTime" class="text-xs font-bold text-gray-400 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 3 דק' קריאה</span>
+                    </div>
+                    <h2 id="modalArticleTitle" class="text-2xl md:text-4xl font-extrabold text-navy-900 dark:text-white mb-3 leading-tight"></h2>
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 flex flex-wrap gap-4 items-center">
+                        <span id="modalArticleAuthor" class="flex items-center gap-1.5"><i data-lucide="pen-tool" class="w-4 h-4"></i></span>
+                        <span id="modalArticleDate" class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4"></i></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- סרגל כלי מאמר -->
+            <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800 p-2 rounded-xl mb-4 border border-gray-100 dark:border-slate-700">
+                <div class="flex gap-1">
+                    <button onclick="changeFontSize(1)" class="p-2 bg-white dark:bg-slate-700 rounded-lg shadow-sm border border-gray-200 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-600 transition text-navy-900 dark:text-white font-bold" title="הגדל טקסט">A+</button>
+                    <button onclick="changeFontSize(-1)" class="p-2 bg-white dark:bg-slate-700 rounded-lg shadow-sm border border-gray-200 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-600 transition text-navy-900 dark:text-white font-bold" title="הקטן טקסט">A-</button>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="shareArticleWhatsApp()" class="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition font-bold text-sm"><i data-lucide="share-2" class="w-4 h-4"></i> שתף</button>
+                </div>
+            </div>
+
+            <div id="modalArticleContent" class="overflow-y-auto pr-2 text-gray-800 dark:text-gray-200 leading-loose space-y-6 text-lg flex-grow whitespace-pre-wrap custom-scrollbar font-medium transition-all duration-200">
+                <!-- תוכן המאמר יכנס כאן -->
+            </div>
+            
+            <button onclick="closeModal('articleModal')" class="absolute top-6 left-6 text-gray-400 hover:text-navy-900 dark:hover:text-white bg-gray-100 dark:bg-slate-800 p-2 rounded-full transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+        </div>
+    </div>
+
+	<!-- ==================== תפריט נגישות עצמאי (נפתח מלמעלה) ==================== -->
+	<div id="a11yMenu" class="fixed top-20 left-4 sm:left-8 z-[100] hidden flex-col items-start">
+		<div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-2xl border-2 border-gold mb-3 w-64 text-right">
+			<div class="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-slate-700 pb-3">
+				<button onclick="toggleA11yMenu()" class="text-gray-400 hover:text-red-500 transition">
+					<i data-lucide="x" class="w-5 h-5"></i>
+				</button>
+				<h3 class="font-bold text-navy-900 dark:text-white flex items-center gap-2">
+					נגישות <i data-lucide="accessibility" class="w-5 h-5 text-gold"></i>
+				</h3>
+			</div>
+			<div class="space-y-2.5">
+				<button onclick="a11yChangeFontSize(1)" class="w-full bg-gray-50 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white px-4 py-2.5 rounded-xl text-sm font-bold transition flex justify-between items-center">
+					הגדל טקסט <i data-lucide="zoom-in" class="w-4 h-4"></i>
+				</button>
+				<button onclick="a11yChangeFontSize(-1)" class="w-full bg-gray-50 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white px-4 py-2.5 rounded-xl text-sm font-bold transition flex justify-between items-center">
+					הקטן טקסט <i data-lucide="zoom-out" class="w-4 h-4"></i>
+				</button>
+				<button onclick="document.body.classList.toggle('a11y-highlight-links')" class="w-full bg-gray-50 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white px-4 py-2.5 rounded-xl text-sm font-bold transition flex justify-between items-center">
+					הדגשת קישורים <i data-lucide="underline" class="w-4 h-4"></i>
+				</button>
+				<button onclick="document.body.classList.toggle('a11y-readable-font')" class="w-full bg-gray-50 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white px-4 py-2.5 rounded-xl text-sm font-bold transition flex justify-between items-center">
+					גופן קריא <i data-lucide="type" class="w-4 h-4"></i>
+				</button>
+				<div class="w-full h-px bg-gray-200 dark:bg-slate-700 my-2"></div>
+				<button onclick="a11yReset()" class="w-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 px-4 py-2.5 rounded-xl text-sm font-bold transition flex justify-between items-center">
+					איפוס הגדרות <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- ==================== JavaScript & Firebase (ES Modules) ==================== -->
+    <script type="module">
+        const EXPLORER_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTh_3BthetIL8FCWzNz-pQKQAm3_17p3pV802YHC_KIXlxpa1H2FMKTY9uJpsXrqn9wJG-V4XrLA9lc/pub?gid=0&single=true&output=csv';
+        const SCHEDULE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTh_3BthetIL8FCWzNz-pQKQAm3_17p3pV802YHC_KIXlxpa1H2FMKTY9uJpsXrqn9wJG-V4XrLA9lc/pub?gid=1693315274&single=true&output=csv';
+        const ARTICLES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTh_3BthetIL8FCWzNz-pQKQAm3_17p3pV802YHC_KIXlxpa1H2FMKTY9uJpsXrqn9wJG-V4XrLA9lc/pub?gid=1100608744&single=true&output=csv'; 
+        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const GITHUB_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyDcMySKuq53A5E2I3jOBh9lOdfNCtDseXs",
+            authDomain: "forum-habait.firebaseapp.com",
+            projectId: "forum-habait",
+            storageBucket: "forum-habait.firebasestorage.app",
+            messagingSenderId: "944043917590",
+            appId: "1:944043917590:web:e53815c257280f3e1dd037"
+        };
+
+        const isCanvas = typeof __firebase_config !== 'undefined';
+        const firebaseConfig = isCanvas ? JSON.parse(__firebase_config) : GITHUB_FIREBASE_CONFIG;
+        const defaultAppId = typeof __app_id !== 'undefined' ? __app_id : 'forum-habait-github';
+        
+        let app, auth, db;
+        
+        if (firebaseConfig && firebaseConfig.apiKey) {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            
+            const initAuth = async () => {
+                try {
+                    if (isCanvas) {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    }
+                } catch(e) { console.warn("Init auth issue:", e); }
+            };
+            initAuth();
+        }
+
+        window.fileSystem = { name: "ראשי", type: "folder", children: {} };
+        window.lecturerSystem = { name: "מרצים", type: "folder", children: {} };
+        window.currentPathArr = []; 
+        window.currentViewMode = 'lecturers'; 
+        window.allSearchableItems = []; 
+        window.isLoggedIn = false;
+        window.isPremiumUser = false; 
+        window.currentUser = null;
+        window.currentScheduleMonthFilter = 'all'; 
+        let unsubscribeHistory = null;
+        let searchTimeout = null; 
+        let articleBaseFontSize = 18; 
+        let authMode = 'login';
+
+        function safeEncode(str) {
+            return encodeURIComponent(str || '').replace(/'/g, "%27").replace(/"/g, "%22");
+        }
+
+        function showMessage(msg) {
+            document.getElementById('messageModalText').innerText = msg;
+            openModal('messageModal');
+            lucide.createIcons();
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const icon = document.getElementById('darkModeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                icon.setAttribute('data-lucide', 'moon');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                icon.setAttribute('data-lucide', 'sun');
+            }
+            lucide.createIcons();
+        }
+        
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+		document.documentElement.classList.add('dark');
+		setTimeout(() => { document.getElementById('darkModeIcon').setAttribute('data-lucide', 'sun'); lucide.createIcons(); }, 100);
+		}
+
+		// ================ מערכת נוכחות אמת (Heartbeat) ================
+		let liveViewersInterval = null;
+		let localViewersData = [];
+		let viewersUnsubscribe = null;
+
+		function setupLiveViewers(uid) {
+		if (!db) return;
+		const liveViewersRef = collection(db, 'artifacts', defaultAppId, 'public', 'data', 'live_viewers');
+		// מזהה המסמך יהיה מזהה המשתמש. כך משתמש שפתח 3 חלונות נספר רק פעם אחת.
+		const myDocRef = doc(liveViewersRef, uid);
+
+		// עדכון חותמת זמן (פעימת חיים)
+		const updatePresence = async () => {
+		try { await setDoc(myDocRef, { lastActive: Date.now() }); }
+		catch (e) { console.warn("Presence update failed", e); }
+		};
+
+		updatePresence();
+		if (liveViewersInterval) clearInterval(liveViewersInterval);
+		liveViewersInterval = setInterval(updatePresence, 30000); // שידור מחדש כל חצי דקה
+
+		// כשיוצאים מהדף, מנסים למחוק
+		window.addEventListener('beforeunload', () => {
+		deleteDoc(myDocRef).catch(()=>{});
+		});
+
+		// האזנה לכל הצופים החיים באוסף
+		if(viewersUnsubscribe) viewersUnsubscribe();
+		viewersUnsubscribe = onSnapshot(liveViewersRef, (snapshot) => {
+		localViewersData = [];
+		snapshot.forEach(d => localViewersData.push(d.data()));
+		renderLiveViewersCount();
+		}, (err) => console.error("Live viewers fetch error:", err));
+		}
+
+		function renderLiveViewersCount() {
+		// מוסתר זמנית
+		/*
+		const now = Date.now();
+		const activeCount = localViewersData.filter(v => now - v.lastActive < 60000).length;
+            if(document.getElementById('viewersCount')) document.getElementById('viewersCount').innerText = activeCount > 0 ? activeCount : 1;
+            if(document.getElementById('liveViewers')) document.getElementById('liveViewers').classList.remove('hidden');
+            */
+        }
+
+        // setInterval(renderLiveViewersCount, 15000); // מוסתר זמנית
+        // ===============================================================
+
+        if(auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // הפעלת מעקב צופים בזמן אמת לכל משתמש מחובר (גם אנונימי)
+                    // setupLiveViewers(user.uid);
+                    
+                    if (!user.isAnonymous || isCanvas) {
+                        window.currentUser = user;
+                        window.isLoggedIn = true;
+                        window.isPremiumUser = true; 
+                        
+                        document.getElementById('loginText').innerText = "שלום, " + (user.displayName || "משתמש/ת");
+                        document.getElementById('loginBtn').classList.add('text-gold');
+                        document.getElementById('navHistory').classList.remove('hidden');
+                        document.getElementById('newsletterPopup').style.display = 'none';
+                        setupHistoryListener(user.uid);
+                    } else {
+                        window.currentUser = null;
+                        window.isLoggedIn = false;
+                        window.isPremiumUser = false; 
+                        
+                        document.getElementById('loginText').innerText = "התחברות";
+                        document.getElementById('loginBtn').classList.remove('text-gold');
+                        document.getElementById('navHistory').classList.add('hidden');
+                        if(document.getElementById('history').classList.contains('active')) switchTab('home');
+                        if(unsubscribeHistory) unsubscribeHistory();
+                    }
+                } else {
+                    window.currentUser = null;
+                    window.isLoggedIn = false;
+                    window.isPremiumUser = false; 
+                    
+                    document.getElementById('loginText').innerText = "התחברות";
+                    document.getElementById('loginBtn').classList.remove('text-gold');
+                    document.getElementById('navHistory').classList.add('hidden');
+                    if(document.getElementById('history').classList.contains('active')) switchTab('home');
+                    if(unsubscribeHistory) unsubscribeHistory();
+                }
+                updateHistoryView();
+            });
+        }
+
+        function setupHistoryListener(userId) {
+            if (!db) return;
+            if (unsubscribeHistory) unsubscribeHistory();
+            const historyColl = collection(db, 'artifacts', defaultAppId, 'users', userId, 'history');
+            unsubscribeHistory = onSnapshot(historyColl, (snapshot) => {
+                const items = [];
+                snapshot.forEach(doc => items.push(doc.data()));
+                items.sort((a, b) => b.timestamp - a.timestamp);
+                renderHistory(items);
+            }, (error) => {
+                console.error("History fetch error", error);
+            });
+        }
+
+        async function saveToHistory(itemObj) {
+            if (!window.isLoggedIn || !window.currentUser || !db) return;
+            try {
+                const docId = btoa(unescape(encodeURIComponent(itemObj.name))).replace(/[+/=]/g, '').slice(0, 30);
+                const historyRef = doc(db, 'artifacts', defaultAppId, 'users', window.currentUser.uid, 'history', docId);
+                await setDoc(historyRef, {
+                    id: docId,
+                    name: itemObj.name,
+                    type: itemObj.type,
+                    link: itemObj.link,
+                    lecturer: itemObj.lecturer,
+                    timestamp: Date.now()
+                });
+            } catch (error) {
+                console.error("Error saving history:", error);
+            }
+        }
+
+        function renderHistory(items) {
+            const container = document.getElementById('historyContainer');
+            container.innerHTML = '';
+            if (items.length === 0) {
+                container.innerHTML = '<div class="text-center py-16 text-gray-500 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm"><i data-lucide="history" class="w-12 h-12 mx-auto mb-3 text-slate-300 dark:text-slate-600"></i>עדיין לא צפית בשיעורים. ההיסטוריה שלך תופיע כאן.</div>';
+                lucide.createIcons();
+                return;
+            }
+            items.forEach(item => {
+                const dateStr = new Date(item.timestamp).toLocaleString('he-IL', { dateStyle: 'short', timeStyle: 'short' });
+                let icon = "file-text"; let iconColor = "text-gray-600 dark:text-gray-400"; let bgColor = "bg-gray-100 dark:bg-slate-700";
+                let btnText = "המשך";
+                if(item.type === "וידאו") { icon = "video"; iconColor = "text-blue-600 dark:text-blue-400"; bgColor = "bg-blue-100 dark:bg-blue-900/30"; btnText = "המשך צפייה"; }
+                if(item.type === "שמע") { icon = "headphones"; iconColor = "text-purple-600 dark:text-purple-400"; bgColor = "bg-purple-100 dark:bg-purple-900/30"; btnText = "המשך האזנה"; }
+                
+                const encLink = safeEncode(item.link);
+                const encName = safeEncode(item.name);
+                const encType = safeEncode(item.type);
+                const encLecturer = safeEncode(item.lecturer);
+                
+                container.innerHTML += `
+                    <div onclick="handleFileClick('${encLink}', '${encName}', false, '${encType}', '${encLecturer}')" class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between hover:border-purple-300 dark:hover:border-purple-600 transition cursor-pointer gap-4 group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 flex-shrink-0 ${bgColor} rounded-full flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform"><i data-lucide="${icon}" class="${iconColor} w-6 h-6"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 dark:text-white text-lg leading-tight">${item.name}</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> נצפה לאחרונה: ${dateStr} • ${item.lecturer || ''}</p>
+                            </div>
+                        </div>
+                        <button class="bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 border border-purple-200 dark:border-purple-800/50 text-purple-700 dark:text-purple-400 font-bold py-2.5 px-6 rounded-xl text-sm transition whitespace-nowrap md:self-auto self-start shadow-sm flex items-center gap-2">
+                            ${btnText} <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        </button>
+                    </div>`;
+				});
+				lucide.createIcons();
+				}
+
+				function updateHistoryView() {
+				const loggedInState = document.getElementById('loggedInState');
+				const notLoggedInState = document.getElementById('notLoggedInState');
+
+				if (!loggedInState || !notLoggedInState) return;
+
+				if (window.isLoggedIn) {
+				loggedInState.classList.remove('hidden');
+				notLoggedInState.classList.add('hidden');
+				} else {
+				loggedInState.classList.add('hidden');
+				notLoggedInState.classList.remove('hidden');
+				}
+				}
+
+				function switchTab(tabId, updateUrl = true) {
+				document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+
+				// מוודא שהלשונית קיימת, אם לא - מחזיר לראשי
+				const targetTab = document.getElementById(tabId);
+				if(targetTab) {
+				targetTab.classList.add('active');
+				} else {
+				document.getElementById('home').classList.add('active');
+				tabId = 'home';
+				}
+
+				document.querySelectorAll('#mainNavMenu .nav-btn').forEach(btn => {
+				btn.className = "nav-btn px-5 py-2 rounded-lg transition font-semibold text-white hover:bg-slate-700 whitespace-nowrap flex items-center gap-2";
+				if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId)) {
+				btn.className = "nav-btn px-5 py-2 rounded-lg transition font-bold bg-gold text-navy-900 shadow-md whitespace-nowrap flex items-center gap-2 scale-105";
+				}
+				});
+
+				document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+				btn.classList.remove('text-gold');
+				if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId)) {
+				btn.classList.add('text-gold');
+				}
+				});
+
+				const navMenu = document.getElementById('mainNavMenu');
+				if (tabId === 'home') {
+				navMenu.classList.add('hidden');
+				navMenu.classList.remove('sm:flex');
+				} else {
+				navMenu.classList.remove('hidden');
+				navMenu.classList.add('sm:flex');
+				}
+
+				if(tabId === 'history') updateHistoryView();
+
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+
+				// עדכון שורת הכתובת למעלה (בלי לרענן את הדף)
+				if (updateUrl) {
+				history.pushState(null, '', '#' + tabId);
+				}
+				}
+
+				// ================ מערכת אימות (מייל/סיסמה) ================
+				function switchAuthMode(mode) {
+				authMode = mode;
+				const title = document.getElementById('authModalTitle');
+				const submitText = document.getElementById('authSubmitText');
+				const submitIcon = document.getElementById('authSubmitIcon');
+				const nameContainer = document.getElementById('nameFieldContainer');
+				const passContainer = document.getElementById('passwordFieldContainer');
+				const toggleBtn = document.getElementById('authToggleModeBtn');
+				const forgotContainer = document.getElementById('forgotPasswordContainer');
+				const passInput = document.getElementById('authPassword');
+				const errorMsg = document.getElementById('authErrorMsg');
+
+				errorMsg.classList.add('hidden');
+
+				if (mode === 'login') {
+				title.innerText = 'התחברות למערכת';
+				submitText.innerText = 'היכנס למערכת';
+				submitIcon.setAttribute('data-lucide', 'log-in');
+				nameContainer.classList.add('hidden');
+				document.getElementById('authName').required = false;
+				passContainer.classList.remove('hidden');
+				passInput.required = true;
+				toggleBtn.innerText = 'אין לך משתמש? לחץ כאן להרשמה';
+				toggleBtn.onclick = () => switchAuthMode('register');
+				forgotContainer.classList.remove('hidden');
+				} else if (mode === 'register') {
+				title.innerText = 'הרשמה חדשה';
+				submitText.innerText = 'צור משתמש';
+				submitIcon.setAttribute('data-lucide', 'user-plus');
+				nameContainer.classList.remove('hidden');
+				document.getElementById('authName').required = true;
+				passContainer.classList.remove('hidden');
+				passInput.required = true;
+				toggleBtn.innerText = 'יש לך כבר משתמש? התחבר כאן';
+				toggleBtn.onclick = () => switchAuthMode('login');
+				forgotContainer.classList.add('hidden');
+				} else if (mode === 'reset') {
+				title.innerText = 'שחזור סיסמה';
+				submitText.innerText = 'שלח קישור לשחזור';
+				submitIcon.setAttribute('data-lucide', 'mail');
+				nameContainer.classList.add('hidden');
+				document.getElementById('authName').required = false;
+				passContainer.classList.add('hidden');
+				passInput.required = false;
+				toggleBtn.innerText = 'חזור להתחברות';
+				toggleBtn.onclick = () => switchAuthMode('login');
+				forgotContainer.classList.add('hidden');
+				}
+				lucide.createIcons();
+				}
+
+				function translateAuthError(code) {
+				switch(code) {
+				case 'auth/invalid-email': return 'כתובת האימייל אינה תקינה.';
+				case 'auth/user-disabled': return 'משתמש זה נחסם.';
+				case 'auth/user-not-found': return 'לא נמצא משתמש עם אימייל זה.';
+				case 'auth/wrong-password': return 'הסיסמה שגויה.';
+				case 'auth/email-already-in-use': return 'כתובת האימייל כבר רשומה במערכת.';
+				case 'auth/weak-password': return 'הסיסמה חלשה מדי (לפחות 6 תווים).';
+				case 'auth/invalid-credential': return 'פרטי ההתחברות אינם נכונים.';
+				case 'auth/network-request-failed': return 'שגיאת רשת. בדוק את החיבור שלך.';
+				default: return 'התרחשה שגיאה בהתחברות. נסה שוב.';
+				}
+				}
+
+				async function handleAuthSubmit(e) {
+				e.preventDefault();
+				const email = document.getElementById('authEmail').value.trim();
+				const password = document.getElementById('authPassword').value;
+				const name = document.getElementById('authName').value.trim();
+				const errorMsg = document.getElementById('authErrorMsg');
+				const submitBtn = document.getElementById('authSubmitBtn');
+
+				errorMsg.classList.add('hidden');
+				submitBtn.disabled = true;
+				submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+				try {
+				if (authMode === 'login') {
+				await signInWithEmailAndPassword(auth, email, password);
+				closeModal('authModal');
+				} else if (authMode === 'register') {
+				const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+				if (name) {
+				await updateProfile(userCredential.user, { displayName: name });
+				document.getElementById('loginText').innerText = "שלום, " + name;
+				}
+				closeModal('authModal');
+				showMessage("נרשמת בהצלחה למערכת! מעתה הגישה לשיעורים המיוחדים פתוחה עבורך.");
+				} else if (authMode === 'reset') {
+				await sendPasswordResetEmail(auth, email);
+				closeModal('authModal');
+				showMessage("קישור לשחזור סיסמה נשלח לאימייל שלך.");
+				}
+				} catch (error) {
+				console.error("Auth error", error);
+				errorMsg.innerText = translateAuthError(error.code);
+				errorMsg.classList.remove('hidden');
+				} finally {
+				submitBtn.disabled = false;
+				submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+				}
+				}
+
+				async function toggleLogin() {
+				if (!auth) {
+				showMessage('מערכת ההתחברות לא הוגדרה. יש לעדכן את פרטי ה-Firebase בקוד האתר.');
+				return;
+				}
+				if (window.isLoggedIn && !window.currentUser?.isAnonymous) {
+			await signOut(auth);
+			showMessage("התנתקת בהצלחה מהמערכת.");
+			} else {
+			document.getElementById('authEmail').value = '';
+			document.getElementById('authPassword').value = '';
+			document.getElementById('authName').value = '';
+			switchAuthMode('login');
+			openModal('authModal');
+			}
+			}
+
+			function requireLogin(targetTab) {
+			if (!window.isLoggedIn) {
+			openModal('authModal');
+			} else {
+			switchTab(targetTab);
+			}
+			}
+
+			function openModal(id) { document.getElementById(id).classList.add('active'); }
+			function closeModal(id) {
+			document.getElementById(id).classList.remove('active');
+			if(id === 'videoModal') document.getElementById('videoIframe').src = "";
+			}
+
+			let audioPlaySpeed = 1;
+			function handleFileClick(encLink, encName, isPremiumContent, encType = '', encLecturer = '') {
+			const link = decodeURIComponent(encLink);
+			const name = decodeURIComponent(encName);
+			const type = encType ? decodeURIComponent(encType) : 'וידאו';
+			const lecturer = encLecturer ? decodeURIComponent(encLecturer) : '';
+
+			// חסימה למנויים בלבד במידה והמשתמש לא מחובר
+			if (isPremiumContent && !window.isPremiumUser) {
+			openModal('premiumModal');
+			} else {
+			saveToHistory({ name, type, link, lecturer });
+
+			// דרייב לא מאפשרים השמעת שמע בנגן פנימי עקב חסימות אבטחה.
+			// לכן, רק קבצי MP3 ישירים יושמעו בנגן הצף. שמע מדרייב ייפתח בחלון הקופץ.
+			if (type === 'שמע' && link.toLowerCase().endsWith('.mp3')) {
+			openAudioPlayer(link, name, lecturer);
+			} else {
+			let embedLink = link;
+			// המרה לקישור תצוגה מקדימה של דרייב (עובד גם לוידאו וגם לשמע)
+			if(link.includes('drive.google.com/file/d/')) {
+			const fileId = link.split('/d/')[1].split('/')[0];
+			embedLink = `https://drive.google.com/file/d/${fileId}/preview`;
+			}
+			document.getElementById('videoModalTitle').innerText = name;
+			document.getElementById('driveBackupLink').href = link;
+			document.getElementById('videoIframe').src = embedLink;
+			openModal('videoModal');
+			}
+			}
+			}
+
+			function openAudioPlayer(link, name, lecturer) {
+			const playerDiv = document.getElementById('floatingAudioPlayer');
+			const audioEl = document.getElementById('mainAudioElement');
+
+			let audioSrc = link;
+			if(link.includes('drive.google.com/file/d/')) {
+			const fileId = link.split('/d/')[1].split('/')[0];
+			audioSrc = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            }
+            
+            document.getElementById('audioPlayerTitle').innerText = name;
+            document.getElementById('audioPlayerLecturer').innerText = lecturer || 'שמע';
+            audioEl.src = audioSrc;
+            audioEl.playbackRate = audioPlaySpeed;
+            audioEl.play().catch(e => console.log("Auto-play prevented", e));
+            
+            playerDiv.classList.remove('hidden-player');
+        }
+
+        function closeAudioPlayer() {
+            const playerDiv = document.getElementById('floatingAudioPlayer');
+            const audioEl = document.getElementById('mainAudioElement');
+            playerDiv.classList.add('hidden-player');
+            audioEl.pause();
+            audioEl.src = "";
+        }
+
+        function toggleAudioSpeed() {
+            const audioEl = document.getElementById('mainAudioElement');
+            const btn = document.getElementById('audioSpeedBtn');
+            if(audioPlaySpeed === 1) audioPlaySpeed = 1.25;
+            else if(audioPlaySpeed === 1.25) audioPlaySpeed = 1.5;
+            else audioPlaySpeed = 1;
+            
+            audioEl.playbackRate = audioPlaySpeed;
+            btn.innerText = "x" + audioPlaySpeed;
+        }
+
+        window.toggleAudioSpeed = toggleAudioSpeed;
+        window.closeAudioPlayer = closeAudioPlayer;
+        
+        function handleDriveClick(encLink, encName, encType, encLecturer) {
+            saveToHistory({
+                name: decodeURIComponent(encName),
+                link: decodeURIComponent(encLink),
+                type: decodeURIComponent(encType),
+                lecturer: decodeURIComponent(encLecturer)
+            });
+        }
+
+        function openArticleModal(encTitle, encAuthor, encDate, encCat, encContent) {
+            const title = decodeURIComponent(encTitle);
+            const content = decodeURIComponent(encContent);
+            document.getElementById('modalArticleTitle').innerText = title;
+            document.getElementById('modalArticleAuthor').innerHTML = `<i data-lucide="pen-tool" class="w-4 h-4"></i> ` + decodeURIComponent(encAuthor);
+            document.getElementById('modalArticleDate').innerHTML = `<i data-lucide="calendar" class="w-4 h-4"></i> ` + decodeURIComponent(encDate);
+            document.getElementById('modalArticleCategory').innerText = decodeURIComponent(encCat);
+            
+            const wordCount = content.trim().split(/\s+/).length;
+            const readTime = Math.ceil(wordCount / 200) || 1;
+            document.getElementById('modalArticleReadTime').innerHTML = `<i data-lucide="clock" class="w-3 h-3"></i> ${readTime} דק' קריאה`;
+            
+            const contentDiv = document.getElementById('modalArticleContent');
+            contentDiv.innerText = content;
+            contentDiv.style.fontSize = articleBaseFontSize + 'px';
+            
+            window.currentArticleTitleForShare = title;
+            
+            openModal('articleModal');
+            lucide.createIcons();
+        }
+
+        function changeFontSize(step) {
+            articleBaseFontSize += (step * 2);
+            if(articleBaseFontSize < 14) articleBaseFontSize = 14;
+            if(articleBaseFontSize > 30) articleBaseFontSize = 30;
+            document.getElementById('modalArticleContent').style.fontSize = articleBaseFontSize + 'px';
+        }
+        
+        function shareArticleWhatsApp() {
+            const text = encodeURIComponent(`קראתי מאמר מרתק בפורום הבית היהודי: "${window.currentArticleTitleForShare}"\nכדאי לך להיכנס לאתר לקרוא!\n${window.location.href}`);
+            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+        }
+
+        window.changeFontSize = changeFontSize;
+        window.shareArticleWhatsApp = shareArticleWhatsApp;
+
+        function openMailingListModal() { showMessage("כאן יפתח בעתיד טופס הרשמה לתפוצה של גוגל פורמס"); }
+
+        setTimeout(() => {
+            if(!window.isLoggedIn) {
+                const popup = document.getElementById('newsletterPopup');
+                if(popup) popup.classList.remove('translate-y-[150%]', 'opacity-0');
+            }
+        }, 8000);
+
+        function closeNewsletterPopup() { 
+            const popup = document.getElementById('newsletterPopup');
+            if(popup) popup.classList.add('translate-y-[150%]', 'opacity-0'); 
+        }
+
+        function showSkeletons() {
+            const grid = document.getElementById('explorerGrid');
+            if(grid) grid.innerHTML = Array(6).fill().map(() => `<div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-6 h-48 flex flex-col items-center justify-center animate-pulse shadow-sm"><div class="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-full mb-4"></div><div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-3"></div><div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div></div>`).join('');
+        }
+
+        function switchViewMode(mode) {
+            window.currentViewMode = mode;
+            window.currentPathArr = []; 
+            clearSearch(false);
+            
+            document.getElementById('btnViewFolders').className = mode === 'folders' ? "px-6 py-2.5 rounded-lg font-bold text-sm transition bg-white dark:bg-slate-700 text-navy-900 dark:text-white shadow flex items-center gap-2" : "px-6 py-2.5 rounded-lg font-bold text-sm transition text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-2";
+            document.getElementById('btnViewLecturers').className = mode === 'lecturers' ? "px-6 py-2.5 rounded-lg font-bold text-sm transition bg-white dark:bg-slate-700 text-navy-900 dark:text-white shadow flex items-center gap-2" : "px-6 py-2.5 rounded-lg font-bold text-sm transition text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-2";
+            
+            renderCurrentFolder();
+            lucide.createIcons();
+        }
+
+        function navigateTo(index) {
+            clearSearch(false);
+            if (index === -1) window.currentPathArr = []; else window.currentPathArr = window.currentPathArr.slice(0, index + 1);
+            renderCurrentFolder();
+        }
+
+        function jumpToFolderFromSearch(encPathString) {
+            const pathString = decodeURIComponent(encPathString);
+            const pathArray = pathString.split('||');
+            if(pathArray[0] === "ראשי") { window.currentViewMode = 'folders'; pathArray.shift(); } 
+            else { window.currentViewMode = 'lecturers'; }
+
+            window.currentPathArr = pathArray;
+            document.getElementById('btnViewFolders').className = window.currentViewMode === 'folders' ? "px-6 py-2.5 rounded-lg font-bold text-sm transition bg-white dark:bg-slate-700 text-navy-900 dark:text-white shadow flex items-center gap-2" : "px-6 py-2.5 rounded-lg font-bold text-sm transition text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-2";
+            document.getElementById('btnViewLecturers').className = window.currentViewMode === 'lecturers' ? "px-6 py-2.5 rounded-lg font-bold text-sm transition bg-white dark:bg-slate-700 text-navy-900 dark:text-white shadow flex items-center gap-2" : "px-6 py-2.5 rounded-lg font-bold text-sm transition text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-2";
+
+            clearSearch(false);
+            renderCurrentFolder();
+            lucide.createIcons();
+        }
+
+        function saveSearchHistory(term) {
+            if(!term) return;
+            let history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+            history = history.filter(t => t !== term);
+            history.unshift(term);
+            if(history.length > 3) history.pop();
+            localStorage.setItem('searchHistory', JSON.stringify(history));
+            renderSearchHistory();
+        }
+
+        function renderSearchHistory() {
+            const dropdown = document.getElementById('searchHistoryDropdown');
+            const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+            if(history.length === 0) { dropdown.classList.add('hidden'); return; }
+            
+            let html = `<div class="bg-gray-50 dark:bg-slate-900 px-4 py-2 text-xs font-bold text-gray-500 border-b border-gray-100 dark:border-slate-700 flex justify-between">חיפושים אחרונים <button onclick="localStorage.removeItem('searchHistory'); renderSearchHistory()" class="hover:text-red-500">נקה</button></div>`;
+            history.forEach(term => {
+                html += `<button onclick="document.getElementById('searchInput').value='${term}'; handleSearch();" class="w-full text-right px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700/50 flex items-center gap-2 transition"><i data-lucide="history" class="w-4 h-4 text-gray-400"></i> ${term}</button>`;
+            });
+            dropdown.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function executeSearch() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            const selectedLecturer = document.getElementById('lecturerFilter').value;
+            const showNewOnly = document.getElementById('newFilterToggle').checked;
+            const breadcrumbs = document.getElementById('breadcrumbsContainer');
+            const searchHeader = document.getElementById('searchResultsHeader');
+            const dropdown = document.getElementById('searchHistoryDropdown');
+            
+            if (searchTerm) { dropdown.classList.add('hidden'); saveSearchHistory(searchTerm); }
+
+            if (lowerSearchTerm === "" && selectedLecturer === "" && !showNewOnly) {
+                breadcrumbs.classList.remove('hidden'); searchHeader.classList.add('hidden');
+                renderCurrentFolder(); return;
+            }
+            breadcrumbs.classList.add('hidden'); searchHeader.classList.remove('hidden');
+
+            const results = window.allSearchableItems.filter(item => {
+                const safePath = item.path || "";
+                const searchString = item.type === "folder" ? item.name : (item.name + " " + safePath);
+                const matchName = searchString.toLowerCase().includes(lowerSearchTerm);
+                const matchLecturer = selectedLecturer === "" || (item.lecturer && item.lecturer === selectedLecturer);
+                const matchNew = !showNewOnly || (item.isNew && item.type !== 'folder');
+                return matchName && matchLecturer && matchNew;
+            });
+            
+            window.currentSearchTerm = searchTerm; 
+            document.getElementById('searchCount').innerText = `${results.length} תוצאות נמצאו`;
+            drawGrid(results);
+        }
+
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(executeSearch, 300); 
+        }
+
+        function clearSearch(render = true) {
+            document.getElementById('searchInput').value = "";
+            document.getElementById('lecturerFilter').value = "";
+            document.getElementById('newFilterToggle').checked = false;
+            document.getElementById('breadcrumbsContainer').classList.remove('hidden');
+            document.getElementById('searchResultsHeader').classList.add('hidden');
+            window.currentSearchTerm = "";
+            if(render) renderCurrentFolder();
+        }
+
+        document.getElementById('searchInput')?.addEventListener('focus', () => {
+            if(document.getElementById('searchInput').value === "") {
+                document.getElementById('searchHistoryDropdown').classList.remove('hidden');
+                renderSearchHistory();
+            }
+        });
+        
+        document.addEventListener('click', (e) => {
+            if(!e.target.closest('#searchInput') && !e.target.closest('#searchHistoryDropdown')) {
+                document.getElementById('searchHistoryDropdown')?.classList.add('hidden');
+            }
+        });
+
+        async function fetchExplorerData() {
+            if(EXPLORER_CSV_URL.includes('הכנס_את_הקישור')) return;
+            try {
+                const response = await fetch(EXPLORER_CSV_URL);
+                const data = await response.text();
+                buildFileSystem(data);
+            } catch (error) { console.error("שגיאה בסייר הקבצים:", error); }
+        }
+
+        function buildFileSystem(csvText) {
+            const lines = csvText.split('\n');
+            window.fileSystem.children = {}; 
+            window.lecturerSystem.children = {};
+            window.allSearchableItems = [];
+            let lecturersSet = new Set();
+            const today = new Date();
+            document.getElementById('lecturerFilter').innerHTML = '<option value="">כל הרבנים והמרצים</option>';
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i] || !lines[i].trim()) continue;
+                const row = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                const pathStr = row[0] ? row[0].replace(/"/g, '').trim() : '';
+                const fileName = row[1] ? row[1].replace(/"/g, '').trim() : '';
+                const type = row[2] ? row[2].replace(/"/g, '').trim() : '';
+                const link = row[3] ? row[3].replace(/"/g, '').trim() : '';
+                const access = row[4] ? row[4].replace(/"/g, '').trim() : 'פתוח';
+                const lecturer = row[5] ? row[5].replace(/"/g, '').trim() : '';
+                const creationDate = row[6] ? row[6].replace(/"/g, '').trim() : '';
+                if(!pathStr || !fileName) continue;
+                if(lecturer) lecturersSet.add(lecturer);
+                let isNew = false;
+                if(creationDate) {
+                    const fileDate = new Date(creationDate.split('/').reverse().join('-')); 
+                    if (!isNaN(fileDate.getTime())) {
+                        const diffDays = Math.ceil(Math.abs(today - fileDate) / (1000 * 60 * 60 * 24));
+                        if(diffDays <= 14) isNew = true;
+                    }
+                }
+                const fileObj = { name: fileName, type: type, link: link, access: access, path: pathStr, lecturer: lecturer, date: creationDate, isNew: isNew };
+                const folders = pathStr.split('/');
+                let currentNode = window.fileSystem;
+                let currentPathBuild = [];
+                let startIndex = folders[0] === "ראשי" ? 1 : 0;
+                if(folders[0] === "ראשי") currentPathBuild.push("ראשי");
+                for (let j = startIndex; j < folders.length; j++) {
+                    let folderName = folders[j];
+                    currentPathBuild.push(folderName);
+                    if (!currentNode.children[folderName]) {
+                        currentNode.children[folderName] = { name: folderName, type: "folder", pathArr: [...currentPathBuild], children: {} };
+                    }
+                    currentNode = currentNode.children[folderName];
+                }
+                currentNode.children[fileName] = fileObj;
+                if (lecturer) {
+                    if (!window.lecturerSystem.children[lecturer]) {
+                        window.lecturerSystem.children[lecturer] = { name: lecturer, type: "folder", pathArr: [lecturer], children: {} };
+                    }
+                    window.lecturerSystem.children[lecturer].children[fileName] = fileObj;
+                }
+            }
+            function collectAllItems(node, collection) {
+                for (const key in node.children) {
+                    const child = node.children[key];
+                    collection.push(child);
+                    if (child.type === "folder") collectAllItems(child, collection);
+                }
+            }
+            collectAllItems(window.fileSystem, window.allSearchableItems);
+            Array.from(lecturersSet).sort().forEach(l => { document.getElementById('lecturerFilter').innerHTML += `<option value="${l}">${l}</option>`; });
+            switchViewMode('lecturers');
+        }
+
+        function highlightText(text, term) {
+            if (!term) return text;
+            const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<mark>$1</mark>');
+        }
+
+        function renderCurrentFolder() {
+            let baseSystem = window.currentViewMode === 'folders' ? window.fileSystem : window.lecturerSystem;
+            let currentNode = baseSystem;
+            for (let folder of window.currentPathArr) { if(currentNode.children[folder]) currentNode = currentNode.children[folder]; }
+            const breadcrumbsDiv = document.getElementById('breadcrumbsContainer');
+            const homeText = window.currentViewMode === 'folders' ? "סייר התיקיות הראשי" : "כל הרבנים והמרצים";
+            const homeIcon = window.currentViewMode === 'folders' ? "home" : "users";
+            let breadcrumbsHTML = `<button onclick="navigateTo(-1)" class="hover:text-blue-600 font-bold bg-white dark:bg-slate-800 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-200 dark:border-slate-700 shadow-sm transition"><i data-lucide="${homeIcon}" class="w-4 h-4"></i> ${homeText}</button>`;
+            window.currentPathArr.forEach((folder, index) => {
+                breadcrumbsHTML += `<i data-lucide="chevron-left" class="w-4 h-4 text-gray-400 mx-1"></i><button onclick="navigateTo(${index})" class="hover:text-blue-600 font-bold hover:bg-slate-50 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition">${folder}</button>`;
+            });
+            breadcrumbsDiv.innerHTML = breadcrumbsHTML;
+            drawGrid(Object.values(currentNode.children));
+            lucide.createIcons();
+        }
+
+        function drawGrid(items) {
+            const gridDiv = document.getElementById('explorerGrid');
+            const showNewOnly = document.getElementById('newFilterToggle').checked;
+            if (showNewOnly) { items = items.filter(item => item.isNew || item.type === 'folder'); }
+            gridDiv.innerHTML = '';
+            if (items.length === 0) { gridDiv.innerHTML = '<div class="col-span-full py-16 text-center text-gray-400 font-bold text-lg"><i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>לא נמצאו פריטים תואמים.</div>'; lucide.createIcons(); return; }
+            items.sort((a, b) => {
+                if (a.type === "folder" && b.type !== "folder") return -1;
+                if (a.type !== "folder" && b.type === "folder") return 1;
+                return a.name.localeCompare(b.name);
+            });
+            
+            const term = window.currentSearchTerm || '';
+
+            items.forEach(item => {
+                const newBadge = item.isNew ? `<div class="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm animate-pulse z-10 flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3"></i> חדש</div>` : '';
+                const displayTitle = highlightText(item.name, term);
+                const displayLecturer = highlightText(item.lecturer || '', term);
+
+                if (item.type === "folder") {
+                    const pathStr = item.pathArr ? item.pathArr.join('||') : item.name;
+                    const encPath = safeEncode(pathStr);
+                    const itemCount = Object.keys(item.children || {}).length;
+                    const itemText = itemCount === 1 ? '1 פריט' : `${itemCount} פריטים`;
+                    gridDiv.innerHTML += `<div onclick="jumpToFolderFromSearch('${encPath}')" class="tile-card bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-100 dark:border-slate-700 cursor-pointer flex flex-col items-center justify-center text-center relative hover:bg-slate-50 dark:hover:bg-slate-700 transition-all group min-h-[160px]">${newBadge}<div class="w-16 h-16 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i data-lucide="folder" class="w-8 h-8 text-gold"></i></div><span class="font-extrabold text-slate-800 dark:text-white line-clamp-2 text-lg">${displayTitle}</span><span class="text-xs font-bold text-gray-500 mt-3 bg-gray-100 dark:bg-slate-700 px-3 py-1 rounded-full">${itemText}</span></div>`;
+                } else {
+                    let icon = "file-text"; let iconColor = "text-gray-500"; let bgColor = "bg-gray-50 dark:bg-slate-900";
+                    if(item.type === "וידאו") { icon = "video"; iconColor = "text-blue-600 dark:text-blue-400"; bgColor = "bg-blue-50 dark:bg-blue-900/30"; }
+                    if(item.type === "שמע") { icon = "headphones"; iconColor = "text-purple-600 dark:text-purple-400"; bgColor = "bg-purple-50 dark:bg-purple-900/30"; }
+                    const safeAccess = item.access || "";
+                    const isPremium = safeAccess.includes('מנויים');
+                    const badgeClass = isPremium ? "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-gold border-amber-200 dark:border-amber-800" : "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400 border-green-200 dark:border-green-800";
+                    
+                    const encLink = safeEncode(item.link);
+                    const encName = safeEncode(item.name);
+                    const encType = safeEncode(item.type);
+                    const encLecturer = safeEncode(item.lecturer);
+
+                    gridDiv.innerHTML += `
+                    <div class="tile-card bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 flex flex-col relative h-full transition overflow-hidden">
+                        <div class="h-1.5 w-full ${isPremium ? 'bg-navy-900 dark:bg-white' : 'bg-gold'}"></div>
+                        <div class="absolute top-4 right-4 border ${badgeClass} text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">${isPremium ? "<i data-lucide='lock' class='w-3 h-3'></i> מנויים" : "<i data-lucide='unlock' class='w-3 h-3'></i> פתוח"}</div>
+                        ${newBadge}
+                        <div class="p-6 flex flex-col items-center flex-grow text-center mt-4">
+                            <div class="w-16 h-16 rounded-full ${bgColor} flex items-center justify-center mb-4 shadow-inner"><i data-lucide="${icon}" class="w-8 h-8 ${iconColor}"></i></div>
+                            <h3 class="font-extrabold text-slate-800 dark:text-white text-[15px] leading-snug mb-2 line-clamp-2">${displayTitle}</h3>
+                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1"><i data-lucide="user" class="w-3 h-3"></i> ${displayLecturer}</p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-slate-900/50 p-4 border-t border-gray-100 dark:border-slate-700 flex flex-col gap-2">
+                            <div class="flex gap-2">
+                                <button onclick="handleFileClick('${encLink}', '${encName}', ${isPremium}, '${encType}', '${encLecturer}')" class="flex-1 bg-navy-900 hover:bg-navy-800 dark:bg-gold dark:text-navy-900 dark:hover:bg-gold-hover text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm"><i data-lucide="play" class="w-4 h-4 fill-current"></i> ${item.type === 'שמע' ? 'האזן' : 'צפייה'}</button>
+                                <a href="${item.link}" target="_blank" onclick="handleDriveClick('${encLink}', '${encName}', '${encType}', '${encLecturer}')" class="flex-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-slate-700 dark:text-gray-200 text-xs font-bold py-2.5 rounded-xl transition text-center flex items-center justify-center gap-1.5"><i data-lucide="cloud" class="w-4 h-4"></i> דרייב</a>
+                            </div>
+							<a href="https://docs.google.com/forms/d/e/1FAIpQLSesuDJnCPvAe6c-tw8vwc4PK5YuSILAecRMM2WhHOTTsnrB8g/viewform?entry.748112074=${encodeURIComponent(item.name)}&entry.1860984083=${encodeURIComponent(item.lecturer || '')}" target="_blank" class="w-full text-center text-xs text-gray-500 dark:text-gray-400 hover:text-gold dark:hover:text-gold transition font-medium block mt-1.5 flex items-center justify-center gap-1"><i data-lucide="message-square" class="w-3 h-3"></i> שלח משוב לצוות</a>
+						</div>
+                    </div>`;
+                }
+            });
+            lucide.createIcons();
+        }
+
+        async function fetchScheduleData() {
+            if(SCHEDULE_CSV_URL.includes('הכנס_את_הקישור')) return;
+            try {
+                const response = await fetch(SCHEDULE_CSV_URL);
+                const data = await response.text();
+                parseAndRenderSchedule(data);
+            } catch (error) { console.error("שגיאה בלוח הזמנים:", error); }
+        }
+
+        function parseAndRenderSchedule(csvText) {
+            const lines = csvText.split('\n');
+            const groupedSchedule = {};
+            const monthsSet = new Set(); 
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i] || !lines[i].trim()) continue;
+                const row = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                let rawDate = row[0] ? row[0].replace(/"/g, '').trim() : '';
+                const time = row[1] ? row[1].replace(/"/g, '').trim() : '';
+                const lecturer = row[2] ? row[2].replace(/"/g, '').trim() : '';
+                const topic = row[3] ? row[3].replace(/"/g, '').trim() : '';
+                const audience = row[4] ? row[4].replace(/"/g, '').trim() : '';
+                const access = row[5] ? row[5].replace(/"/g, '').trim() : 'פתוח'; 
+                
+                if(!rawDate) continue;
+                let normalizedDateKey = rawDate.replace(/'/g, '').replace(/"/g, '').replace(/\s+/g, ' ').trim();
+                let extractedMonth = "כללי";
+                const words = normalizedDateKey.split(' ');
+                if(words.length >= 2) { extractedMonth = words[1]; } 
+                else if (normalizedDateKey.includes('/')) { extractedMonth = normalizedDateKey.split('/')[1]; }
+                monthsSet.add(extractedMonth);
+                if(!groupedSchedule[normalizedDateKey]) { groupedSchedule[normalizedDateKey] = { displayName: rawDate, month: extractedMonth, events: [] }; }
+                groupedSchedule[normalizedDateKey].events.push({ time, lecturer, topic, audience, access });
+            }
+            const monthFilterContainer = document.getElementById('monthFilterContainer');
+            monthFilterContainer.innerHTML = `<button onclick="filterSchedule('all')" class="w-full text-right px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-white font-bold transition text-sm flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4"></i> הכל</button>`;
+            Array.from(monthsSet).forEach(month => {
+                if(month !== "כללי" && month.length > 1) {
+                    monthFilterContainer.innerHTML += `<button onclick="filterSchedule('${month}')" class="w-full text-right px-4 py-2.5 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-semibold transition text-sm flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4"></i> חודש ${month}</button>`;
+                }
+            });
+            window.allScheduleData = groupedSchedule; 
+            renderScheduleCards('all');
+            lucide.createIcons();
+        }
+
+        function filterSchedule(monthFilter) {
+            window.currentScheduleMonthFilter = monthFilter;
+            handleScheduleSearch(); // יקרא ל-render עם כל הסינונים
+            
+            const buttons = document.getElementById('monthFilterContainer').querySelectorAll('button');
+            buttons.forEach(b => {
+                b.className = "w-full text-right px-4 py-2.5 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-semibold transition text-sm flex items-center gap-2";
+                if((monthFilter === 'all' && b.innerText.includes('הכל')) || (b.innerText.includes(monthFilter))) {
+                    b.className = "w-full text-right px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-white font-bold transition text-sm flex items-center gap-2";
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function handleScheduleSearch() {
+            const searchTerm = document.getElementById('scheduleLecturerSearch').value;
+            const audienceFilter = document.getElementById('scheduleAudienceFilter').value;
+            const accessFilter = document.getElementById('scheduleAccessFilter').value;
+            
+            renderScheduleCards(window.currentScheduleMonthFilter, searchTerm, audienceFilter, accessFilter);
+        }
+
+        function renderScheduleCards(filterByMonth, searchTerm = '', audienceFilter = 'all', accessFilter = 'all') {
+            const container = document.getElementById('scheduleContainer');
+            container.innerHTML = '';
+            let count = 0;
+            const term = searchTerm.toLowerCase().trim();
+
+            for (const [dateKey, dayData] of Object.entries(window.allScheduleData)) {
+                if (filterByMonth !== 'all' && dayData.month !== filterByMonth) continue;
+                
+                let dayEventsHTML = '';
+                let hasVisibleEvents = false;
+
+                dayData.events.forEach(ev => {
+                    // סינון חיפוש טקסט (מרצה או שיעור)
+                    if (term && (!ev.lecturer || !ev.lecturer.toLowerCase().includes(term)) && (!ev.topic || !ev.topic.toLowerCase().includes(term))) {
+                        return; 
+                    }
+
+                    // סינון קהל יעד
+                    if (audienceFilter !== 'all' && ev.audience !== audienceFilter) {
+                         if (!ev.topic.includes('הפסקה')) return; // לא מסננים הפסקות לפי קהל
+                    }
+
+                    // סינון גישה (פתוח/מנויים)
+                    const isPremium = ev.access.includes('מנויים') || ev.access.includes('פרימיום') || ev.access.includes('שותפים');
+                    if (accessFilter === 'פתוח' && isPremium) return;
+                    if (accessFilter === 'מנויים' && !isPremium) return;
+
+                    const safeTopic = ev.topic || "";
+                    if(safeTopic.includes('הפסקה')) {
+                        if(!term && audienceFilter === 'all' && accessFilter === 'all') { // מראה הפסקה רק אם לא סיננו ספציפית
+                            dayEventsHTML += `<div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-dashed border-gray-300 dark:border-slate-700 opacity-80"><span class="font-bold text-gray-500 dark:text-gray-400 min-w-[50px] text-left" dir="ltr">${ev.time}</span><div class="w-px h-6 bg-gray-300 dark:bg-slate-600"></div><span class="font-bold text-gray-500 dark:text-gray-400 flex-grow text-center flex justify-center items-center gap-2"><i data-lucide="coffee" class="w-5 h-5"></i> הפסקה</span></div>`;
+                            hasVisibleEvents = true;
+                        }
+                    } else {
+                        hasVisibleEvents = true;
+                        let badgeColor = "bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-slate-600";
+                        if(ev.audience === "זוגי") badgeColor = "bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-800/50";
+                        if(ev.audience === "נשים") badgeColor = "bg-pink-100 dark:bg-pink-900/40 text-pink-800 dark:text-pink-300 border-pink-200 dark:border-pink-800/50";
+                        if(ev.audience === "גברים") badgeColor = "bg-teal-100 dark:bg-teal-900/40 text-teal-800 dark:text-teal-300 border-teal-200 dark:border-teal-800/50";
+                        
+                        const accessBadgeClass = isPremium ? "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-gold border-amber-200 dark:border-amber-800" : "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400 border-green-200 dark:border-green-800";
+                        const accessText = isPremium ? "<i data-lucide='crown' class='w-3 h-3'></i> פרימיום" : "<i data-lucide='unlock' class='w-3 h-3'></i> פתוח לכולם";
+                        const cardStyle = isPremium ? "border-gold border-r-4" : "border-green-400 border-r-4";
+
+                        const displayTopic = highlightText(ev.topic, term);
+                        const displayLecturer = highlightText(ev.lecturer, term);
+
+                        dayEventsHTML += `<div class="flex flex-col sm:flex-row sm:items-center gap-4 bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100 dark:border-slate-700 ${cardStyle}">
+                            <span class="font-extrabold text-gold min-w-[50px] text-xl" dir="ltr">${ev.time}</span>
+                            <div class="hidden sm:block w-px h-12 bg-gray-100 dark:bg-slate-700"></div>
+                            <div class="flex-grow">
+                                <h4 class="font-bold text-lg text-slate-800 dark:text-white flex flex-wrap items-center gap-2 mb-1">
+                                    ${displayTopic}
+                                </h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
+                                    <i data-lucide="user" class="w-4 h-4"></i> ${displayLecturer}
+                                </p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 self-start sm:self-center">
+                                <span class="text-[10px] px-2 py-1 rounded border shadow-sm flex items-center gap-1 font-bold ${accessBadgeClass}">${accessText}</span>
+                                <span class="border ${badgeColor} text-xs font-bold px-3 py-1.5 rounded-full text-center whitespace-nowrap shadow-sm">${ev.audience}</span>
+                            </div>
+                        </div>`;
+                    }
+                });
+
+                if (hasVisibleEvents) {
+                    count++;
+                    container.innerHTML += `<div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden"><div class="bg-navy-900 text-gold px-6 py-4 border-b-4 border-gold"><h3 class="text-xl font-extrabold flex items-center gap-2"><i data-lucide="calendar-check-2" class="w-6 h-6"></i> ${dayData.displayName}</h3></div><div class="p-6 space-y-4 bg-gray-50 dark:bg-slate-900/30">${dayEventsHTML}</div></div>`;
+                }
+            }
+            
+            if (count === 0) {
+                container.innerHTML = '<div class="text-center py-16 text-gray-500 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700"><i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>לא נמצאו שיעורים תואמים לסינון.</div>';
+            }
+            lucide.createIcons();
+        }
+        async function fetchArticlesData() {
+            if(ARTICLES_CSV_URL.includes('הכנס_את_המספר_כאן')) {
+                document.getElementById('articlesContainer').innerHTML = '<div class="col-span-full py-16 text-center text-gray-400 font-medium text-lg">יש להגדיר בקוד האתר את הקישור לגיליון המאמרים.</div>';
+                return;
+            }
+            try {
+                const response = await fetch(ARTICLES_CSV_URL);
+                const data = await response.text();
+                parseAndRenderArticles(data);
+            } catch (error) { console.error("שגיאה בטעינת המאמרים:", error); }
+        }
+
+        function parseAndRenderArticles(csvText) {
+            function csvToArray(text) {
+                let p = '', row = [''], ret = [row], i = 0, r = 0, s = !0, l;
+                for (l of text) {
+                    if ('"' === l) { if (s && l === p) row[i] += l; s = !s; } 
+                    else if (',' === l && s) l = row[++i] = '';
+                    else if ('\n' === l && s) { if ('\r' === p) row[i] = row[i].slice(0, -1); row = ret[++r] = [l = '']; i = 0; } 
+                    else row[i] += l;
+                    p = l;
+                }
+                return ret;
+            }
+            const rows = csvToArray(csvText);
+            const container = document.getElementById('articlesContainer');
+            container.innerHTML = '';
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                if (!row || row.length < 3 || !row[2]) continue; 
+                const date = row[0] ? row[0].trim() : '';
+                const category = row[1] ? row[1].trim() : 'כללי';
+                const title = row[2] ? row[2].trim() : '';
+                const author = row[3] ? row[3].trim() : 'צוות הפורום';
+                const excerpt = row[4] ? row[4].trim() : '';
+                const fullContent = row[5] ? row[5].trim() : 'אין תוכן זמין למאמר זה.';
+                let icon = "file-text";
+                if(category.includes('הדרכה') || category.includes('שלום בית')) icon = "book-open";
+                if(category.includes('שאלות') || category.includes('שו"ת')) icon = "message-circle-question";
+                
+                const wordCount = fullContent.trim().split(/\s+/).length;
+                const readTime = Math.ceil(wordCount / 200) || 1;
+
+                const encTitle = safeEncode(title);
+                const encAuthor = safeEncode(author);
+                const encDate = safeEncode(date);
+                const encCat = safeEncode(category);
+                const encContent = safeEncode(fullContent);
+
+                container.innerHTML += `
+                <article class="tile-card bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col">
+                    <div class="h-36 bg-navy-900 flex items-center justify-center text-gold relative">
+                        <i data-lucide="${icon}" class="w-12 h-12"></i>
+                        <div class="absolute bottom-3 right-3 bg-black/50 backdrop-blur text-white text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${readTime} דק' קריאה</div>
+                    </div>
+                    <div class="p-6 md:p-8 flex-grow flex flex-col">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-[11px] font-extrabold text-cyan-700 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/30 px-2.5 py-1 rounded-md">${category}</span>
+                            <span class="text-xs font-bold text-gray-400">${date}</span>
+                        </div>
+                        <h3 class="font-extrabold text-xl text-slate-800 dark:text-white mb-3 leading-tight">${title}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 font-medium mb-6 line-clamp-3 flex-grow leading-relaxed">${excerpt}</p>
+                        <div class="flex justify-between items-center mt-auto border-t border-gray-100 dark:border-slate-700 pt-5">
+                            <span class="text-xs text-gray-500 dark:text-gray-400 font-bold flex items-center gap-1.5"><i data-lucide="pen-tool" class="w-4 h-4"></i> ${author}</span>
+                            <button onclick="openArticleModal('${encTitle}', '${encAuthor}', '${encDate}', '${encCat}', '${encContent}')" class="text-sm font-bold text-navy-900 dark:text-white bg-gold hover:bg-gold-hover px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-sm">קרא מאמר <i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                </article>`;
+            }
+            lucide.createIcons();
+        }
+
+        Object.assign(window, {
+            switchTab, toggleLogin, requireLogin, openModal, closeModal, openMailingListModal,
+            handleFileClick, handleDriveClick, closeNewsletterPopup, switchViewMode, navigateTo,
+            jumpToFolderFromSearch, filterSchedule, handleScheduleSearch, updateHistoryView, saveToHistory, openArticleModal,
+            clearSearch, handleSearch, showSkeletons, toggleDarkMode, switchAuthMode, handleAuthSubmit
+        });
+
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('backToTopBtn');
+            if (window.scrollY > 300) {
+                btn.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+            } else {
+                btn.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+            }
+        });
+
+        let touchstartX = 0;
+        let touchendX = 0;
+        const tabsOrder = ['home', 'library', 'schedule', 'beit-horaah', 'blog', 'about'];
+        
+        document.getElementById('mainContainer').addEventListener('touchstart', e => {
+            touchstartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+        
+        document.getElementById('mainContainer').addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+
+        function handleSwipe() {
+            const activeTabId = document.querySelector('.tab-content.active').id;
+            const currentIndex = tabsOrder.indexOf(activeTabId);
+            if(currentIndex === -1) return;
+
+            if (touchendX < touchstartX - 75) { 
+                if (currentIndex < tabsOrder.length - 1) switchTab(tabsOrder[currentIndex + 1]);
+            }
+            if (touchendX > touchstartX + 75) { 
+                if (currentIndex > 0) switchTab(tabsOrder[currentIndex - 1]);
+            }
+        }
+					// ================= מערכת נגישות עצמאית =================
+        let currentA11yZoom = 100;
+
+        function toggleA11yMenu() {
+            const menu = document.getElementById('a11yMenu');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+            lucide.createIcons();
+        }
+
+        function a11yChangeFontSize(step) {
+            currentA11yZoom += step * 10;
+            if (currentA11yZoom > 150) currentA11yZoom = 150;
+            if (currentA11yZoom < 80) currentA11yZoom = 80;
+            document.documentElement.style.fontSize = currentA11yZoom + '%';
+        }
+
+        function a11yReset() {
+            currentA11yZoom = 100;
+            document.documentElement.style.fontSize = '100%';
+            document.body.classList.remove('a11y-highlight-links', 'a11y-readable-font');
+            toggleA11yMenu();
+            if(typeof showMessage === "function") showMessage("הגדרות הנגישות אופסו בהצלחה.");
+        }
+
+        // חשיפת הפונקציות ל-HTML בגלל שהקוד בתוך מודול
+        window.toggleA11yMenu = toggleA11yMenu;
+        window.a11yChangeFontSize = a11yChangeFontSize;
+        window.a11yReset = a11yReset;
+        // =======================================================
+
+        function initApp() {
+    lucide.createIcons();
+    
+    // בדיקה האם יש סיומת בקישור (כמו #schedule), ואם לא - פתיחת עמוד ראשי
+    const initialTab = window.location.hash.replace('#', '') || 'home';
+    switchTab(initialTab, false); 
+    
+    showSkeletons();
+    fetchExplorerData();
+    fetchScheduleData();
+    fetchArticlesData();
+
+    const searchInput = document.getElementById('searchInput');
+    const lecturerFilter = document.getElementById('lecturerFilter');
+    const newFilterToggle = document.getElementById('newFilterToggle');
+    
+    if(searchInput) searchInput.addEventListener('input', handleSearch);
+    if(lecturerFilter) lecturerFilter.addEventListener('change', handleSearch);
+    if(newFilterToggle) newFilterToggle.addEventListener('change', handleSearch);
+
+    // האזנה לכפתורי "אחורה/קדימה" בדפדפן
+    window.addEventListener('hashchange', () => {
+        const hashTab = window.location.hash.replace('#', '') || 'home';
+        switchTab(hashTab, false);
+    });
+}
+
+        // הבטחה להפעלה נכונה בסביבת מודול
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+    </script>
+	
+</body>
+</html>
